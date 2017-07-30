@@ -49,7 +49,7 @@ public class CapGraphTest {
 	
 	@Ignore @Test
 	public void DfsTest(){
-		Stack<Integer> dfs = g.Dfs();
+		Stack<Vertex<Integer>> dfs = g.Dfs();
 		System.out.println(dfs);
 	}
 	

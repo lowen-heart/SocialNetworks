@@ -23,13 +23,13 @@ public class CapGraph implements Graph {
 
 	private int numVertices;
 	private int numEdges;
-	private Map<Integer,ArrayList<Integer>> adjListMap;
+	private Map<Vertex<Integer>,ArrayList<Vertex<Integer>>> adjListMap;
 	private List<Graph> sccs;
 	
 	
 	public CapGraph() {
 		super();
-		adjListMap = new HashMap<Integer,ArrayList<Integer>>();
+		adjListMap = new HashMap<Vertex<Integer>,ArrayList<Vertex<Integer>>>();
 		sccs =  new LinkedList<Graph>();
 	}
 
@@ -42,8 +42,9 @@ public class CapGraph implements Graph {
 			throw new IllegalArgumentException("A number passed must be grater than 0");
 		}
 		
-		ArrayList<Integer> neighbors = new ArrayList<Integer>();
-		adjListMap.put(num, neighbors);
+		Vertex<Integer> vertex = new Vertex<Integer>(num);
+		ArrayList<Vertex<Integer>> neighbors = new ArrayList<Vertex<Integer>>();
+		adjListMap.put(vertex, neighbors);
 		
 		numVertices++;
 	}
@@ -57,13 +58,16 @@ public class CapGraph implements Graph {
 			throw new IllegalArgumentException("A number passed must be greater than 0");
 		}
 		
-		if(!adjListMap.containsKey(from)){
+		Vertex<Integer> vertexFrom = new Vertex<Integer>(from);
+		Vertex<Integer> vertexTo = new Vertex<Integer>(to);
+		
+		if(!adjListMap.containsKey(vertexFrom)){
 			throw new NullPointerException("Vertex must be created first");
 		}
 		
-		ArrayList<Integer> neighbors = getNeighbors(from);
-		neighbors.add(to);
-		adjListMap.replace(from, neighbors);
+		ArrayList<Vertex<Integer>> neighbors = getNeighbors(from);
+		neighbors.add(vertexTo);
+		adjListMap.replace(vertexFrom, neighbors);
 		
 		numEdges++;
 	}
@@ -74,15 +78,15 @@ public class CapGraph implements Graph {
 	@Override
 	public Graph getEgonet(int center) {
 		Graph egonet = new CapGraph();
-		ArrayList<Integer> neighbors = getNeighbors(center);
+		ArrayList<Vertex<Integer>> neighbors = getNeighbors(center);
 		egonet.addVertex(center);
-		for(Integer i : neighbors){
-			egonet.addEdge(center, i);
-			ArrayList<Integer> vneighbors = getNeighbors(i);
-			egonet.addVertex(i);
-			for(Integer n : vneighbors){
+		for(Vertex<Integer> i : neighbors){
+			egonet.addEdge(center, i.getValue());
+			ArrayList<Vertex<Integer>> vneighbors = getNeighbors(i.getValue());
+			egonet.addVertex(i.getValue());
+			for(Vertex<Integer> n : vneighbors){
 				if(neighbors.contains(n)){
-					egonet.addEdge(i, n);
+					egonet.addEdge(i.getValue(), n.getValue());
 				}
 			}
 		}
@@ -94,11 +98,12 @@ public class CapGraph implements Graph {
 	 */
 	@Override
 	public List<Graph> getSCCs() {
-		Stack<Integer> vertices = new Stack<Integer>();
-		for(Integer item : getVertices()){
+		Stack<Vertex<Integer>> vertices = new Stack<Vertex<Integer>>();
+		vertices.addAll(getVertices());
+		/*for(Vertex<Integer> item : getVertices()){
 			vertices.push(item);
-		}
-		Stack<Integer> finishedDfs = Dfs(this,vertices);
+		}*/
+		Stack<Vertex<Integer>> finishedDfs = Dfs(this,vertices);
 		Graph transpose = buildSubGraph(getVertices(),true);
 		finishedDfs = Dfs(transpose, finishedDfs);
 		return sccs;
@@ -110,9 +115,14 @@ public class CapGraph implements Graph {
 	@Override
 	public HashMap<Integer, HashSet<Integer>> exportGraph() {
 		HashMap<Integer,HashSet<Integer>> export = new HashMap<Integer,HashSet<Integer>>();
-		Set<Integer> vertices = adjListMap.keySet();
-		for(Integer i : vertices){
-			export.put(i, new HashSet<Integer>(getNeighbors(i)));
+		Set<Vertex<Integer>> vertices = adjListMap.keySet();
+		for(Vertex<Integer> i : vertices){
+			ArrayList<Vertex<Integer>> neighbors = getNeighbors(i.getValue());
+			HashSet<Integer> n = new HashSet<Integer>();
+			for(Vertex<Integer> v : neighbors){
+				n.add(v.getValue());
+			}
+			export.put(i.getValue(), n);
 		}
 		return export;
 	}
@@ -125,10 +135,10 @@ public class CapGraph implements Graph {
 		System.out.println("Number of vertices: " + numVertices +
 							" Number of edges: " + numEdges);
 		
-		Set<Integer> vertices = getVertices();
+		Set<Vertex<Integer>> vertices = getVertices();
 		
-		for(Integer i : vertices){
-			System.out.println("Vertex: " + i + " Edges: " + getNeighbors(i));
+		for(Vertex<Integer> i : vertices){
+			System.out.println("Vertex: " + i + " Edges: " + getNeighbors(i.getValue()));
 		}
 	}
 
@@ -147,9 +157,11 @@ public class CapGraph implements Graph {
 	 * 		vertex from which search for neighbors
 	 * @return returns the list of neighbors of a vertex
 	 */
-	private ArrayList<Integer> getNeighbors(int vertex){
-		ArrayList<Integer> neighbors;
-		neighbors = new ArrayList<Integer>(adjListMap.get(vertex));
+	private ArrayList<Vertex<Integer>> getNeighbors(int vertex){
+		ArrayList<Vertex<Integer>> neighbors;
+		Vertex<Integer> v = new Vertex<Integer>(vertex);
+		
+		neighbors = new ArrayList<Vertex<Integer>>(adjListMap.get(v));
 		return neighbors;
 	}
 	
@@ -157,9 +169,9 @@ public class CapGraph implements Graph {
 	 * 
 	 * @return
 	 */
-	public Stack<Integer> Dfs(){
-		Stack<Integer> vertices = new Stack<Integer>();
-		for(Integer item : getVertices()){
+	public Stack<Vertex<Integer>> Dfs(){
+		Stack<Vertex<Integer>> vertices = new Stack<Vertex<Integer>>();
+		for(Vertex<Integer> item : getVertices()){
 			vertices.push(item);
 		}
 		return Dfs(this, vertices);	
@@ -171,12 +183,12 @@ public class CapGraph implements Graph {
 	 * @param vertices
 	 * @return
 	 */
-	private Stack<Integer> Dfs(Graph graph, Stack<Integer> vertices){
-		Set<Integer> visited = new HashSet<Integer>();
-		Set<Integer> sccVertices = new HashSet<Integer>();
-		Stack<Integer> finished = new Stack<Integer>();
+	private Stack<Vertex<Integer>> Dfs(Graph graph, Stack<Vertex<Integer>> vertices){
+		Set<Vertex<Integer>> visited = new HashSet<Vertex<Integer>>();
+		Set<Vertex<Integer>> sccVertices = new HashSet<Vertex<Integer>>();
+		Stack<Vertex<Integer>> finished = new Stack<Vertex<Integer>>();
 		sccs.clear();
-		Integer v;
+		Vertex<Integer> v;
 		while(!vertices.isEmpty()){
 			v = vertices.pop();
 			if(!visited.contains(v)){
@@ -196,11 +208,11 @@ public class CapGraph implements Graph {
 	 * @param finished
 	 * @param sccVertices
 	 */
-	private void DfsVisit(Graph graph, Integer v, Set<Integer> visited, Stack<Integer> finished,Set<Integer> sccVertices) {
+	private void DfsVisit(Graph graph, Vertex<Integer> v, Set<Vertex<Integer>> visited, Stack<Vertex<Integer>> finished,Set<Vertex<Integer>> sccVertices) {
 		visited.add(v);
 		sccVertices.add(v);
 		CapGraph g = (CapGraph) graph;
-		for(Integer n : g.getNeighbors(v)){
+		for(Vertex<Integer> n : g.getNeighbors(v.getValue())){
 			if(!visited.contains(n)){
 				DfsVisit(g,n,visited,finished,sccVertices);
 			}
@@ -215,21 +227,21 @@ public class CapGraph implements Graph {
 	 * @param transpose
 	 * 			parameter to set to true that tells that if you want build a transpose graph
 	 */
-	private Graph buildSubGraph(Set<Integer> vertices, boolean transpose) {
+	private Graph buildSubGraph(Set<Vertex<Integer>> vertices, boolean transpose) {
 		CapGraph g = new CapGraph();
-		for(Integer from : vertices){
-			if(!g.isVertex(from)){
-				g.addVertex(from);
+		for(Vertex<Integer> from : vertices){
+			if(!g.isVertex(from.getValue())){
+				g.addVertex(from.getValue());
 			}
-			for(Integer to: getNeighbors(from)){
+			for(Vertex<Integer> to: getNeighbors(from.getValue())){
 				if(vertices.contains(to)){
-					if(!g.isVertex(to)){
-						g.addVertex(to);
+					if(!g.isVertex(to.getValue())){
+						g.addVertex(to.getValue());
 					}
 					if(!transpose){
-						g.addEdge(from, to);
+						g.addEdge(from.getValue(), to.getValue());
 					}else{
-						g.addEdge(to, from);
+						g.addEdge(to.getValue(), from.getValue());
 					}
 				}
 			}
@@ -258,7 +270,7 @@ public class CapGraph implements Graph {
 	 * Method to have the vertices of a graph
 	 * @return return the set of vertices
 	 */
-	public Set<Integer> getVertices(){
+	public Set<Vertex<Integer>> getVertices(){
 		return adjListMap.keySet();
 	}
 }
