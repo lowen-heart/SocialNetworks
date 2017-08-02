@@ -1,4 +1,4 @@
-package graph;
+package graph.test;
 
 import static org.junit.Assert.*;
 
@@ -11,6 +11,8 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import graph.CapGraph;
+import graph.Vertex;
 import util.GraphLoader;
 
 public class CapGraphTest {
@@ -19,8 +21,8 @@ public class CapGraphTest {
 
 	@Before
 	public void setUp() throws Exception {	
-		//GraphLoader.loadGraph(g, "data/small_test_graph.txt");
-		GraphLoader.loadGraph(g, "data/small_test_graph_no_bidirectional.txt");
+		GraphLoader.loadGraph(g, "data/small_test_graph.txt");
+		//GraphLoader.loadGraph(g, "data/small_test_graph_no_bidirectional.txt");
 		//GraphLoader.loadGraph(g, "data/facebook_1000.txt");
 	}
 
@@ -31,7 +33,7 @@ public class CapGraphTest {
 		
 	}
 
-	@Ignore @Test
+	@Test
 	public void isVertexTest(){
 		assertTrue(g.isVertex(2));
 		assertFalse(g.isVertex(-10));
@@ -62,8 +64,12 @@ public class CapGraphTest {
 	
 	@Test
 	public void getEgonetTest(){
-		CapGraph egonet = (CapGraph) g.getEgonet(44);
-		egonet.printGraph();
+		try{
+			CapGraph egonet = (CapGraph) g.getEgonet(44);
+			egonet.printGraph();
+		}catch(IllegalArgumentException e){
+			System.out.println(e);
+		}
 	}
 	
 	@Test

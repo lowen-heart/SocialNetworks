@@ -77,6 +77,9 @@ public class CapGraph implements Graph {
 	 */
 	@Override
 	public Graph getEgonet(int center) {
+		if(!this.isVertex(center)){
+			throw new IllegalArgumentException("This is not a vertex of the graph");
+		}
 		Graph egonet = new CapGraph();
 		ArrayList<Vertex<Integer>> neighbors = getNeighbors(center);
 		egonet.addVertex(center);
@@ -148,7 +151,8 @@ public class CapGraph implements Graph {
 	 * @return return true if the vertex passed is a vertex of this graph. For tesing purpose.
 	 */
 	public boolean isVertex(int vertex){
-		return adjListMap.containsKey(vertex);
+		Vertex<Integer> v = new Vertex<Integer>(vertex);
+		return adjListMap.containsKey(v);
 	}
 	
 	/**

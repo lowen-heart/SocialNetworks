@@ -34,7 +34,12 @@ public class Vertex <E extends Comparable<E>> {
 	    final int prime = 31;
 	    int result = 1;
 	    result = prime * result + ((value == null) ? 0 : value.hashCode());
-	    result = prime * result + ((value == null) ? 0 : value.hashCode());
 	    return result;
 	}
+
+	@Override
+	public String toString() {
+		return value.toString();
+	}
+	
 }
