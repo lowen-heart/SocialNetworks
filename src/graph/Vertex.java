@@ -24,9 +24,8 @@ public class Vertex <E extends Comparable<E>> {
 	    if (obj == this)
 	        return true;
 
-	    Vertex vertex = (Vertex) obj;    
-	    return (this.value != null && this.value.equals(vertex.value) 
-	            && this.value != null && this.value.equals(vertex.value));
+	    Vertex<E> vertex = (Vertex<E>) obj;    
+	    return (this.value != null && this.value.equals(vertex.value));
 	}
 	
 	@Override
