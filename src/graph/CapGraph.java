@@ -23,13 +23,13 @@ public class CapGraph implements Graph {
 
 	private int numVertices;
 	private int numEdges;
-	private Map<Vertex<Integer>,ArrayList<Vertex<Integer>>> adjListMap;
+	private Map<Vertex<Integer>,ArrayList<Edge<Integer>>> adjListMap;
 	private List<Graph> sccs;
 	
 	
 	public CapGraph() {
 		super();
-		adjListMap = new HashMap<Vertex<Integer>,ArrayList<Vertex<Integer>>>();
+		adjListMap = new HashMap<Vertex<Integer>,ArrayList<Edge<Integer>>>();
 		sccs =  new LinkedList<Graph>();
 	}
 
@@ -43,7 +43,7 @@ public class CapGraph implements Graph {
 		}
 		
 		Vertex<Integer> vertex = new Vertex<Integer>(num);
-		ArrayList<Vertex<Integer>> neighbors = new ArrayList<Vertex<Integer>>();
+		ArrayList<Edge<Integer>> neighbors = new ArrayList<Edge<Integer>>();
 		adjListMap.put(vertex, neighbors);
 		
 		numVertices++;
@@ -59,15 +59,15 @@ public class CapGraph implements Graph {
 		}
 		
 		Vertex<Integer> vertexFrom = new Vertex<Integer>(from);
-		Vertex<Integer> vertexTo = new Vertex<Integer>(to);
 		
 		if(!adjListMap.containsKey(vertexFrom)){
 			throw new NullPointerException("Vertex must be created first");
 		}
 		
-		ArrayList<Vertex<Integer>> neighbors = getNeighbors(from);
-		neighbors.add(vertexTo);
-		adjListMap.replace(vertexFrom, neighbors);
+		Edge<Integer> newEdge = new Edge<Integer>(from,to);
+		ArrayList<Edge<Integer>> edges = getEdges(from);
+		edges.add(newEdge);
+		adjListMap.replace(vertexFrom, edges);
 		
 		numEdges++;
 	}
@@ -141,7 +141,7 @@ public class CapGraph implements Graph {
 		Set<Vertex<Integer>> vertices = getVertices();
 		
 		for(Vertex<Integer> i : vertices){
-			System.out.println("Vertex: " + i + " Edges: " + getNeighbors(i.getValue()));
+			System.out.println("Vertex: " + i + " Edges: " + getEdges(i.getValue()));
 		}
 	}
 
@@ -162,11 +162,28 @@ public class CapGraph implements Graph {
 	 * @return returns the list of neighbors of a vertex
 	 */
 	private ArrayList<Vertex<Integer>> getNeighbors(int vertex){
-		ArrayList<Vertex<Integer>> neighbors;
+		ArrayList<Vertex<Integer>> neighbors = new ArrayList<Vertex<Integer>>();
 		Vertex<Integer> v = new Vertex<Integer>(vertex);
 		
-		neighbors = new ArrayList<Vertex<Integer>>(adjListMap.get(v));
+		for(Edge<Integer> edge : adjListMap.get(v)){
+			neighbors.add(edge.getTo());
+		}
+		
 		return neighbors;
+	}
+	
+	/**
+	 * 
+	 * @param vertex
+	 * 		vertex from which search for edges
+	 * @return returns the list of edges of a vertex
+	 */
+	private ArrayList<Edge<Integer>> getEdges(int vertex){
+		ArrayList<Edge<Integer>> edges;
+		Vertex<Integer> v = new Vertex<Integer>(vertex);
+		
+		edges = new ArrayList<Edge<Integer>>(adjListMap.get(v));
+		return edges;
 	}
 	
 	/**
@@ -237,15 +254,15 @@ public class CapGraph implements Graph {
 			if(!g.isVertex(from.getValue())){
 				g.addVertex(from.getValue());
 			}
-			for(Vertex<Integer> to: getNeighbors(from.getValue())){
-				if(vertices.contains(to)){
-					if(!g.isVertex(to.getValue())){
-						g.addVertex(to.getValue());
+			for(Edge<Integer> edge: getEdges(from.getValue())){
+				if(vertices.contains(edge.getTo())){
+					if(!g.isVertex(edge.getTo().getValue())){
+						g.addVertex(edge.getTo().getValue());
 					}
 					if(!transpose){
-						g.addEdge(from.getValue(), to.getValue());
+						g.addEdge(edge.getFrom().getValue(), edge.getTo().getValue());
 					}else{
-						g.addEdge(to.getValue(), from.getValue());
+						g.addEdge(edge.getTo().getValue(), edge.getFrom().getValue());
 					}
 				}
 			}
