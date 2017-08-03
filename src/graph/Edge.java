@@ -24,16 +24,16 @@ public class Edge <E extends Comparable<E>>{
 		return from;
 	}
 
-	public void setFrom(Vertex<E> from) {
-		this.from = from;
+	public void setFrom(E from) {
+		this.from.setValue(from);;
 	}
 
 	public Vertex<E> getTo() {
 		return to;
 	}
 
-	public void setTo(Vertex<E> to) {
-		this.to = to;
+	public void setTo(E to) {
+		this.to.setValue(to);;
 	}
 
 	public double getWeight() {
@@ -60,8 +60,8 @@ public class Edge <E extends Comparable<E>>{
 	    Edge<E> edge = (Edge<E>) obj;    
 	    return (this.getFrom() != null && 
 	    		this.getTo() != null && 
-	    		this.getFrom().equals(edge.getFrom().getValue()) && 
-	    		this.getTo().equals(edge.getTo().getValue()));
+	    		this.getFrom().equals(edge.getFrom()) && 
+	    		this.getTo().equals(edge.getTo()));
 	}
 
 }
