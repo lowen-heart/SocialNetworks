@@ -187,8 +187,9 @@ public class CapGraph implements Graph {
 	}
 	
 	/**
+	 * Method to prepare to make a DFS on this graph
 	 * 
-	 * @return
+	 * @return returns the vertices of a DFS in a stack structure
 	 */
 	public Stack<Vertex<Integer>> Dfs(){
 		Stack<Vertex<Integer>> vertices = new Stack<Vertex<Integer>>();
@@ -199,10 +200,14 @@ public class CapGraph implements Graph {
 	}
 	
 	/**
+	 * Helper method used to actually make DFS on a given graph
 	 * 
 	 * @param graph
+	 * 			the graph where you need to make a DFS search
 	 * @param vertices
+	 * 			the stack of vertices used for the DFS search
 	 * @return
+	 * 			returns a stack of visited vertices during DFS
 	 */
 	private Stack<Vertex<Integer>> Dfs(Graph graph, Stack<Vertex<Integer>> vertices){
 		Set<Vertex<Integer>> visited = new HashSet<Vertex<Integer>>();
@@ -222,12 +227,17 @@ public class CapGraph implements Graph {
 	}
 	
 	/**
-	 * 
+	 * Helper method that does DFS visit on a given graph and a vertex.
 	 * @param graph
+	 * 		graph on where do DFS
 	 * @param v
+	 * 		vertex where start to make DFS visit
 	 * @param visited
+	 * 		Set of visited vertices
 	 * @param finished
+	 * 		Stack of already visited vertices
 	 * @param sccVertices
+	 * 		Set of vertices used for SCCS
 	 */
 	private void DfsVisit(Graph graph, Vertex<Integer> v, Set<Vertex<Integer>> visited, Stack<Vertex<Integer>> finished,Set<Vertex<Integer>> sccVertices) {
 		visited.add(v);
