@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import graph.entity.Reviewer;
+
 /**
  * @author Your name here.
  * 
@@ -23,13 +25,13 @@ public class CapGraph implements Graph {
 
 	private int numVertices;
 	private int numEdges;
-	private Map<Vertex<Integer>,ArrayList<Edge<Integer>>> adjListMap;
+	private Map<Vertex<Reviewer>,ArrayList<Edge<Reviewer>>> adjListMap;
 	private List<Graph> sccs;
 	
 	
 	public CapGraph() {
 		super();
-		adjListMap = new HashMap<Vertex<Integer>,ArrayList<Edge<Integer>>>();
+		adjListMap = new HashMap<Vertex<Reviewer>,ArrayList<Edge<Reviewer>>>();
 		sccs =  new LinkedList<Graph>();
 	}
 
@@ -37,35 +39,52 @@ public class CapGraph implements Graph {
 	 * @see graph.Graph#addVertex(int)
 	 */
 	@Override
-	public void addVertex(int num) {
-		if(num < 0){
-			throw new IllegalArgumentException("A number passed must be grater than 0");
+	public void addVertex(Reviewer r) {
+		if(r == null){
+			throw new NullPointerException("A reviewer passed is null");
 		}
 		
-		Vertex<Integer> vertex = new Vertex<Integer>(num);
-		ArrayList<Edge<Integer>> neighbors = new ArrayList<Edge<Integer>>();
+		Vertex<Reviewer> vertex = new Vertex<Reviewer>(r);
+		ArrayList<Edge<Reviewer>> neighbors = new ArrayList<Edge<Reviewer>>();
 		adjListMap.put(vertex, neighbors);
 		
 		numVertices++;
+	}
+	
+	public Reviewer getVertexValue(Reviewer value){
+		
+		Set<Vertex<Reviewer>> set = adjListMap.keySet();
+		Vertex<Reviewer> v = new Vertex<Reviewer>(value);
+		
+		if(set.contains(v)){
+			for(Vertex<Reviewer> vr : set){
+				Reviewer r = vr.getValue();
+				if(r.equals(v.getValue())){
+					return r;
+				}		
+			}
+		}
+	
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see graph.Graph#addEdge(int, int)
 	 */
 	@Override
-	public void addEdge(int from, int to) {
-		if(from < 0 || to < 0){
-			throw new IllegalArgumentException("A number passed must be greater than 0");
+	public void addEdge(Reviewer from, Reviewer to) {
+		if(from == null || to == null){
+			throw new IllegalArgumentException("A reviewer passed is null");
 		}
 		
-		Vertex<Integer> vertexFrom = new Vertex<Integer>(from);
+		Vertex<Reviewer> vertexFrom = new Vertex<Reviewer>(from);
 		
 		if(!adjListMap.containsKey(vertexFrom)){
 			throw new NullPointerException("Vertex must be created first");
 		}
 		
-		Edge<Integer> newEdge = new Edge<Integer>(from,to);
-		ArrayList<Edge<Integer>> edges = getEdges(from);
+		Edge<Reviewer> newEdge = new Edge<Reviewer>(from,to);
+		ArrayList<Edge<Reviewer>> edges = getEdges(from);
 		edges.add(newEdge);
 		adjListMap.replace(vertexFrom, edges);
 		
@@ -77,11 +96,12 @@ public class CapGraph implements Graph {
 	 */
 	@Override
 	public Graph getEgonet(int center) {
-		if(!this.isVertex(center)){
+		
+		/*if(!this.isVertex(center)){
 			throw new IllegalArgumentException("This is not a vertex of the graph");
-		}
+		}*/
 		Graph egonet = new CapGraph();
-		ArrayList<Vertex<Integer>> neighbors = getNeighbors(center);
+		/*ArrayList<Vertex<Integer>> neighbors = getNeighbors(center);
 		egonet.addVertex(center);
 		for(Vertex<Integer> i : neighbors){
 			egonet.addEdge(center, i.getValue());
@@ -92,7 +112,7 @@ public class CapGraph implements Graph {
 					egonet.addEdge(i.getValue(), n.getValue());
 				}
 			}
-		}
+		}*/
 		return egonet;
 	}
 
@@ -101,12 +121,12 @@ public class CapGraph implements Graph {
 	 */
 	@Override
 	public List<Graph> getSCCs() {
-		Stack<Vertex<Integer>> vertices = new Stack<Vertex<Integer>>();
+		Stack<Vertex<Reviewer>> vertices = new Stack<Vertex<Reviewer>>();
 		vertices.addAll(getVertices());
 		/*for(Vertex<Integer> item : getVertices()){
 			vertices.push(item);
 		}*/
-		Stack<Vertex<Integer>> finishedDfs = Dfs(this,vertices);
+		Stack<Vertex<Reviewer>> finishedDfs = Dfs(this,vertices);
 		Graph transpose = buildSubGraph(getVertices(),true);
 		finishedDfs = Dfs(transpose, finishedDfs);
 		return sccs;
@@ -116,13 +136,13 @@ public class CapGraph implements Graph {
 	 * @see graph.Graph#exportGraph()
 	 */
 	@Override
-	public HashMap<Integer, HashSet<Integer>> exportGraph() {
-		HashMap<Integer,HashSet<Integer>> export = new HashMap<Integer,HashSet<Integer>>();
-		Set<Vertex<Integer>> vertices = adjListMap.keySet();
-		for(Vertex<Integer> i : vertices){
-			ArrayList<Vertex<Integer>> neighbors = getNeighbors(i.getValue());
-			HashSet<Integer> n = new HashSet<Integer>();
-			for(Vertex<Integer> v : neighbors){
+	public HashMap<Reviewer, HashSet<Reviewer>> exportGraph() {
+		HashMap<Reviewer,HashSet<Reviewer>> export = new HashMap<Reviewer,HashSet<Reviewer>>();
+		Set<Vertex<Reviewer>> vertices = adjListMap.keySet();
+		for(Vertex<Reviewer> i : vertices){
+			ArrayList<Vertex<Reviewer>> neighbors = getNeighbors(i.getValue());
+			HashSet<Reviewer> n = new HashSet<Reviewer>();
+			for(Vertex<Reviewer> v : neighbors){
 				n.add(v.getValue());
 			}
 			export.put(i.getValue(), n);
@@ -138,9 +158,9 @@ public class CapGraph implements Graph {
 		System.out.println("Number of vertices: " + numVertices +
 							" Number of edges: " + numEdges);
 		
-		Set<Vertex<Integer>> vertices = getVertices();
+		Set<Vertex<Reviewer>> vertices = getVertices();
 		
-		for(Vertex<Integer> i : vertices){
+		for(Vertex<Reviewer> i : vertices){
 			System.out.println("Vertex: " + i + " Edges: " + getEdges(i.getValue()));
 		}
 	}
@@ -150,22 +170,22 @@ public class CapGraph implements Graph {
 	 * @param vertex
 	 * @return return true if the vertex passed is a vertex of this graph. For tesing purpose.
 	 */
-	public boolean isVertex(int vertex){
-		Vertex<Integer> v = new Vertex<Integer>(vertex);
+	public boolean isVertex(Reviewer vertex){
+		Vertex<Reviewer> v = new Vertex<Reviewer>(vertex);
 		return adjListMap.containsKey(v);
 	}
 	
 	/**
 	 * 
-	 * @param vertex
+	 * @param reviewer
 	 * 		vertex from which search for neighbors
 	 * @return returns the list of neighbors of a vertex
 	 */
-	private ArrayList<Vertex<Integer>> getNeighbors(int vertex){
-		ArrayList<Vertex<Integer>> neighbors = new ArrayList<Vertex<Integer>>();
-		Vertex<Integer> v = new Vertex<Integer>(vertex);
+	private ArrayList<Vertex<Reviewer>> getNeighbors(Reviewer reviewer){
+		ArrayList<Vertex<Reviewer>> neighbors = new ArrayList<Vertex<Reviewer>>();
+		Vertex<Reviewer> v = new Vertex<Reviewer>(reviewer);
 		
-		for(Edge<Integer> edge : adjListMap.get(v)){
+		for(Edge<Reviewer> edge : adjListMap.get(v)){
 			neighbors.add(edge.getTo());
 		}
 		
@@ -174,15 +194,15 @@ public class CapGraph implements Graph {
 	
 	/**
 	 * 
-	 * @param vertex
+	 * @param from
 	 * 		vertex from which search for edges
 	 * @return returns the list of edges of a vertex
 	 */
-	private ArrayList<Edge<Integer>> getEdges(int vertex){
-		ArrayList<Edge<Integer>> edges;
-		Vertex<Integer> v = new Vertex<Integer>(vertex);
+	private ArrayList<Edge<Reviewer>> getEdges(Reviewer from){
+		ArrayList<Edge<Reviewer>> edges;
+		Vertex<Reviewer> v = new Vertex<Reviewer>(from);
 		
-		edges = new ArrayList<Edge<Integer>>(adjListMap.get(v));
+		edges = new ArrayList<Edge<Reviewer>>(adjListMap.get(v));
 		return edges;
 	}
 	
@@ -191,9 +211,9 @@ public class CapGraph implements Graph {
 	 * 
 	 * @return returns the vertices of a DFS in a stack structure
 	 */
-	public Stack<Vertex<Integer>> Dfs(){
-		Stack<Vertex<Integer>> vertices = new Stack<Vertex<Integer>>();
-		for(Vertex<Integer> item : getVertices()){
+	public Stack<Vertex<Reviewer>> Dfs(){
+		Stack<Vertex<Reviewer>> vertices = new Stack<Vertex<Reviewer>>();
+		for(Vertex<Reviewer> item : getVertices()){
 			vertices.push(item);
 		}
 		return Dfs(this, vertices);	
@@ -209,12 +229,12 @@ public class CapGraph implements Graph {
 	 * @return
 	 * 			returns a stack of visited vertices during DFS
 	 */
-	private Stack<Vertex<Integer>> Dfs(Graph graph, Stack<Vertex<Integer>> vertices){
-		Set<Vertex<Integer>> visited = new HashSet<Vertex<Integer>>();
-		Set<Vertex<Integer>> sccVertices = new HashSet<Vertex<Integer>>();
-		Stack<Vertex<Integer>> finished = new Stack<Vertex<Integer>>();
+	private Stack<Vertex<Reviewer>> Dfs(Graph graph, Stack<Vertex<Reviewer>> vertices){
+		Set<Vertex<Reviewer>> visited = new HashSet<Vertex<Reviewer>>();
+		Set<Vertex<Reviewer>> sccVertices = new HashSet<Vertex<Reviewer>>();
+		Stack<Vertex<Reviewer>> finished = new Stack<Vertex<Reviewer>>();
 		sccs.clear();
-		Vertex<Integer> v;
+		Vertex<Reviewer> v;
 		while(!vertices.isEmpty()){
 			v = vertices.pop();
 			if(!visited.contains(v)){
@@ -239,11 +259,11 @@ public class CapGraph implements Graph {
 	 * @param sccVertices
 	 * 		Set of vertices used for SCCS
 	 */
-	private void DfsVisit(Graph graph, Vertex<Integer> v, Set<Vertex<Integer>> visited, Stack<Vertex<Integer>> finished,Set<Vertex<Integer>> sccVertices) {
+	private void DfsVisit(Graph graph, Vertex<Reviewer> v, Set<Vertex<Reviewer>> visited, Stack<Vertex<Reviewer>> finished,Set<Vertex<Reviewer>> sccVertices) {
 		visited.add(v);
 		sccVertices.add(v);
 		CapGraph g = (CapGraph) graph;
-		for(Vertex<Integer> n : g.getNeighbors(v.getValue())){
+		for(Vertex<Reviewer> n : g.getNeighbors(v.getValue())){
 			if(!visited.contains(n)){
 				DfsVisit(g,n,visited,finished,sccVertices);
 			}
@@ -258,13 +278,13 @@ public class CapGraph implements Graph {
 	 * @param transpose
 	 * 			parameter to set to true that tells that if you want build a transpose graph
 	 */
-	private Graph buildSubGraph(Set<Vertex<Integer>> vertices, boolean transpose) {
+	private Graph buildSubGraph(Set<Vertex<Reviewer>> vertices, boolean transpose) {
 		CapGraph g = new CapGraph();
-		for(Vertex<Integer> from : vertices){
+		for(Vertex<Reviewer> from : vertices){
 			if(!g.isVertex(from.getValue())){
 				g.addVertex(from.getValue());
 			}
-			for(Edge<Integer> edge: getEdges(from.getValue())){
+			for(Edge<Reviewer> edge: getEdges(from.getValue())){
 				if(vertices.contains(edge.getTo())){
 					if(!g.isVertex(edge.getTo().getValue())){
 						g.addVertex(edge.getTo().getValue());
@@ -301,7 +321,7 @@ public class CapGraph implements Graph {
 	 * Method to have the vertices of a graph
 	 * @return return the set of vertices
 	 */
-	public Set<Vertex<Integer>> getVertices(){
+	public Set<Vertex<Reviewer>> getVertices(){
 		return adjListMap.keySet();
 	}
 }

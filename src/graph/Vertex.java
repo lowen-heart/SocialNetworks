@@ -24,7 +24,8 @@ public class Vertex <E extends Comparable<E>> {
 	    if (obj == this)
 	        return true;
 
-	    Vertex<E> vertex = (Vertex<E>) obj;    
+	    Vertex<E> vertex = (Vertex<E>) obj; 
+	    System.out.println("Equals Vertex");
 	    return (this.value != null && this.value.equals(vertex.value));
 	}
 	

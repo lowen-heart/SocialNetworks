@@ -5,12 +5,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import graph.entity.Reviewer;
+
 public interface Graph {
     /* Creates a vertex with the given number. */
-    public void addVertex(int num);
+    public void addVertex(Reviewer num);
     
     /* Creates an edge from the first vertex to the second. */
-    public void addEdge(int from, int to);
+    public void addEdge(Reviewer from, Reviewer to);
 
     /* Finds the egonet centered at a given node. */
     public Graph getEgonet(int center);
@@ -26,5 +28,5 @@ public interface Graph {
      * edge from the corresponding key. 
 	 * The returned representation ignores edge weights and 
 	 * multi-edges.  */
-    public HashMap<Integer, HashSet<Integer>> exportGraph();
+    public HashMap<Reviewer, HashSet<Reviewer>> exportGraph();
 } 
