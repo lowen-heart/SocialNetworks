@@ -1,8 +1,12 @@
 package graph;
 
+import java.util.HashMap;
+
 public class Vertex <E extends Comparable<E>> {
 
 	private E value;
+	HashMap<E,HashMap<E,E>> visitedPaths;
+	
 
 	public Vertex(E value) {
 		super();
@@ -16,6 +20,11 @@ public class Vertex <E extends Comparable<E>> {
 	public void setValue(E value) {
 		this.value = value;
 	}
+	
+	public boolean addVisitedPath(E end, HashMap<E,E> visitedPath){
+		this.visitedPaths.put(end, visitedPath);
+		return true;
+	}
 
 	@Override
 	public boolean equals(Object obj){
@@ -25,7 +34,7 @@ public class Vertex <E extends Comparable<E>> {
 	        return true;
 
 	    Vertex<E> vertex = (Vertex<E>) obj; 
-	    System.out.println("Equals Vertex");
+	    //System.out.println("Equals Vertex: " + this.value.toString() + "," + vertex.value.toString());
 	    return (this.value != null && this.value.equals(vertex.value));
 	}
 	

@@ -3,15 +3,20 @@
  */
 package graph;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
+import java.util.function.Consumer;
 
+import graph.entity.ReviewAirline;
 import graph.entity.Reviewer;
 
 /**
@@ -27,12 +32,25 @@ public class CapGraph implements Graph {
 	private int numEdges;
 	private Map<Vertex<Reviewer>,ArrayList<Edge<Reviewer>>> adjListMap;
 	private List<Graph> sccs;
-	
-	
+	private Vertex<Reviewer> best;
+	private Vertex<Reviewer> worst;
+
 	public CapGraph() {
 		super();
 		adjListMap = new HashMap<Vertex<Reviewer>,ArrayList<Edge<Reviewer>>>();
 		sccs =  new LinkedList<Graph>();
+		best = new Vertex<Reviewer>(new Reviewer(Integer.MAX_VALUE,"Best","Best", "Unknown", new ArrayList<ReviewAirline>(),
+				new ReviewAirline(LocalDate.now(),"",ReviewAirline.Classes.ECONOMY.toString(), 0.0f,"",0.0f,0.0f,0.0f,0.0f,0.0f,false), new ArrayList<ReviewAirline>(),
+				new ReviewAirline(LocalDate.now(),"",ReviewAirline.Classes.PREMIUMECONOMY.toString(), 0.0f,"",0.0f,0.0f,0.0f,0.0f,0.0f,false), new ArrayList<ReviewAirline>(),
+				new ReviewAirline(LocalDate.now(),"",ReviewAirline.Classes.BUSINESS.toString(), 0.0f,"",0.0f,0.0f,0.0f,0.0f,0.0f,false), new ArrayList<ReviewAirline>(),
+				new ReviewAirline(LocalDate.now(),"",ReviewAirline.Classes.FIRSTCLASS.toString(), 0.0f,"",0.0f,0.0f,0.0f,0.0f,0.0f,false), new ArrayList<ReviewAirline>(),
+				new ReviewAirline(LocalDate.now(),"",ReviewAirline.Classes.EMPTY.toString(), 0.0f,"",0.0f,0.0f,0.0f,0.0f,0.0f,false)));
+		worst = new Vertex<Reviewer>(new Reviewer(Integer.MAX_VALUE-1,"Worst","Worst","Unknown",new ArrayList<ReviewAirline>(),
+				new ReviewAirline(LocalDate.now(),"",ReviewAirline.Classes.ECONOMY.toString(), 10.0f,"",5.0f,5.0f,5.0f,5.0f,5.0f,false), new ArrayList<ReviewAirline>(),
+				new ReviewAirline(LocalDate.now(),"",ReviewAirline.Classes.PREMIUMECONOMY.toString(), 10.0f,"",5.0f,5.0f,5.0f,5.0f,5.0f,false), new ArrayList<ReviewAirline>(),
+				new ReviewAirline(LocalDate.now(),"",ReviewAirline.Classes.BUSINESS.toString(), 10.0f,"",5.0f,5.0f,5.0f,5.0f,5.0f,false), new ArrayList<ReviewAirline>(),
+				new ReviewAirline(LocalDate.now(),"",ReviewAirline.Classes.FIRSTCLASS.toString(), 10.0f,"",5.0f,5.0f,5.0f,5.0f,5.0f,false), new ArrayList<ReviewAirline>(),
+				new ReviewAirline(LocalDate.now(),"",ReviewAirline.Classes.EMPTY.toString(), 10.0f,"",5.0f,5.0f,5.0f,5.0f,5.0f,false)));
 	}
 
 	/* (non-Javadoc)
@@ -140,7 +158,7 @@ public class CapGraph implements Graph {
 		HashMap<Reviewer,HashSet<Reviewer>> export = new HashMap<Reviewer,HashSet<Reviewer>>();
 		Set<Vertex<Reviewer>> vertices = adjListMap.keySet();
 		for(Vertex<Reviewer> i : vertices){
-			ArrayList<Vertex<Reviewer>> neighbors = getNeighbors(i.getValue());
+			ArrayList<Vertex<Reviewer>> neighbors = (ArrayList<Vertex<Reviewer>>) getNeighbors(i.getValue());
 			HashSet<Reviewer> n = new HashSet<Reviewer>();
 			for(Vertex<Reviewer> v : neighbors){
 				n.add(v.getValue());
@@ -181,7 +199,7 @@ public class CapGraph implements Graph {
 	 * 		vertex from which search for neighbors
 	 * @return returns the list of neighbors of a vertex
 	 */
-	private ArrayList<Vertex<Reviewer>> getNeighbors(Reviewer reviewer){
+	private List<Vertex<Reviewer>> getNeighbors(Reviewer reviewer){
 		ArrayList<Vertex<Reviewer>> neighbors = new ArrayList<Vertex<Reviewer>>();
 		Vertex<Reviewer> v = new Vertex<Reviewer>(reviewer);
 		
@@ -300,6 +318,158 @@ public class CapGraph implements Graph {
 		return g;
 	}
 	
+	public List<Reviewer> degreesOfSeparation(Reviewer start, Reviewer goal){
+		
+		//List<Reviewer> path = new ArrayList<Reviewer>();
+		
+		return bfs(start,goal);
+	}
+	
+	/**
+	 * Find the path from start to goal using breadth first search
+	 * 
+	 * @param start
+	 *            The starting location
+	 * @param goal
+	 *            The goal location
+	 * @return The list of intersections that form the shortest (unweighted)
+	 *         path from start to goal (including both start and goal).
+	 */
+	public List<Reviewer> bfs(Reviewer start, Reviewer goal) {
+		// Dummy variable for calling the search algorithms
+		Consumer<Reviewer> temp = (x) -> {
+		};
+		return bfs(start, goal, temp);
+	}
+
+	/**
+	 * Find the path from start to goal using breadth first search
+	 * 
+	 * @param start
+	 *            The starting location
+	 * @param goal
+	 *            The goal location
+	 * @param nodeSearched
+	 *            A hook for visualization. See assignment instructions for how
+	 *            to use it.
+	 * @return The list of intersections that form the shortest (unweighted)
+	 *         path from start to goal (including both start and goal).
+	 */
+	public List<Reviewer> bfs(Reviewer start, Reviewer goal,
+			Consumer<Reviewer> nodeSearched) {
+
+
+		// if start or goal is null just return a null value
+		if (start == null || goal == null) {
+			System.out.println("Start or goal node is null!  No path exists.");
+			return null;
+		}
+
+		// create parent hashmap
+		HashMap<Reviewer, Reviewer> parent = new HashMap<Reviewer, Reviewer>();
+
+		// call bfsSearch sub-routine to do bfs search on the graph
+		boolean found = bfsSearch(start, goal, parent);
+
+		// if the path does not exists, return null
+		if (!found) {
+			System.out.println("No path exists");
+			return null;
+		}
+
+		// reconstruct the path
+		return buildPath(start, goal, parent);
+	}
+	
+	/**
+	 * Find if exist a path between a two given geographic points
+	 * 
+	 * @param start
+	 *            The starting geographic point where start
+	 * @param end
+	 *            The ending target geographic point where arrive
+	 * @param parent
+	 *            The parent HashMap
+	 *
+	 * @return True if there is a path, false if there is no path between the
+	 *         two geographic points
+	 */
+	private boolean bfsSearch(Reviewer start, Reviewer end,
+			HashMap<Reviewer, Reviewer> parent) {
+
+		// create a queue where put geographic points to visit
+		Queue<Reviewer> queue = new LinkedList<Reviewer>();
+		// hashset of geographic points visited
+		HashSet<Reviewer> visited = new HashSet<Reviewer>();
+
+		queue.add(start);
+		visited.add(start);
+		Reviewer curr;
+
+		// while there is no more geographic points to analyze
+		while (!queue.isEmpty()) {
+
+			curr = queue.poll();
+
+			if (curr.equals(end)) {
+				return true;
+			}
+
+			// get the neighbors of the current geographic point
+			List<Vertex<Reviewer>> neighbors = getNeighbors(curr);
+			ListIterator<Vertex<Reviewer>> neighIter = neighbors.listIterator(neighbors.size());
+
+			while (neighIter.hasPrevious()) {
+				Reviewer next = neighIter.previous().getValue();
+				if (!visited.contains(next)) {
+					visited.add(next);
+					parent.put(curr, next);
+					queue.add(next);
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Reconstruct the path between two geographic points
+	 * 
+	 * @param start
+	 *            The starting geographic point where start
+	 * @param end
+	 *            The ending target geographic point where arrive
+	 * @param parent
+	 *            The parent HashMap
+	 *
+	 * @return return a list of geographic points that represents the path
+	 *         between two intersections
+	 */
+	private List<Reviewer> buildPath(Reviewer start, Reviewer end,
+			HashMap<Reviewer, Reviewer> parent) {
+
+		LinkedList<Reviewer> path = new LinkedList<Reviewer>();
+		Reviewer curr = start;
+		Reviewer prev = null;
+		// while we have not reached the start add the current node visited as
+		// first node inside the path
+		// doing so we are creating the path from the start to the end
+		while (curr != null) {
+			//path.addFirst(curr);
+			path.add(curr);
+			//add parent list to visitedPaths inside MapNode.
+			//adjListMap.get(new Vertex<Reviewer>(curr)).addVisitedPath(end, new HashMap<Reviewer, Reviewer>(parent));
+			prev = curr;
+			curr = parent.get(curr);
+			parent.remove(prev);
+		}
+		// add start to the begin
+		//path.addFirst(start);
+		path.add(end);
+		System.out.println(path);
+		return path;
+	}
+	
 	/**
 	 * Report size of vertex set
 	 * @return The number of vertices in the graph.
@@ -323,5 +493,21 @@ public class CapGraph implements Graph {
 	 */
 	public Set<Vertex<Reviewer>> getVertices(){
 		return adjListMap.keySet();
+	}
+	
+	public Vertex<Reviewer> getBest() {
+		return best;
+	}
+
+	public void setBest(Vertex<Reviewer> best) {
+		this.best = best;
+	}
+
+	public Vertex<Reviewer> getWorst() {
+		return worst;
+	}
+
+	public void setWorst(Vertex<Reviewer> worst) {
+		this.worst = worst;
 	}
 }

@@ -62,7 +62,7 @@ public class Person{
 		Person person = (Person) obj;
 		
 		if(this.name.equals(person.getName()) && this.surname.equals(person.getSurname()) && this.country.equals(person.getCountry())){
-			System.out.println("Equals Person");
+			//System.out.println("Equals Person");
 			return true;
 		}
 	
