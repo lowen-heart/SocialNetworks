@@ -203,18 +203,22 @@ public class GraphLoader {
 					}
 
 					if (closeness) {
+						System.out.print("From: " + from.getValue().getId());
+						System.out.print(" - To: " + to.getValue().getId());
+						System.out.println(" - Closensess: " + closeness);
+						//System.out.println("Edges: " + from.getValue().getId() + " - " + to.getValue().getId());
 						g.addEdge(from.getValue(), to.getValue());
-						if(guigraph.getEdge(String.valueOf(to.getValue().getId()) + "-" + String.valueOf(from.getValue().getId())) == null){
+						if(guigraph.getEdge(String.valueOf(from.getValue().getId()) + "-" + String.valueOf(to.getValue().getId())) == null && guigraph.getEdge(String.valueOf(to.getValue().getId()) + "-" + String.valueOf(from.getValue().getId())) == null){
 							guigraph.addEdge(String.valueOf(from.getValue().getId()) + "-" + String.valueOf(to.getValue().getId()),
 									String.valueOf(from.getValue().getId()), String.valueOf(to.getValue().getId()));
-							System.out.println((guigraph.getEdge(String.valueOf(from.getValue().getId()) + "-" + String.valueOf(to.getValue().getId()))).toString());
+							//System.out.println("Gui Edge: " + (guigraph.getEdge(String.valueOf(from.getValue().getId()) + "-" + String.valueOf(to.getValue().getId()))).toString());
 						}
 					}
 
 					closeness = false;
 
 				}
-
+				
 			}
 
 		}

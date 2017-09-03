@@ -116,26 +116,26 @@ public class ReviewAirline extends Review implements Comparable {
 	public boolean matches(ReviewAirline r) {
 
 		int matches = 0;
-		float limit = 1.0f;
+		
+		float cabinDelta = this.getCabinStaffRating() - r.getCabinStaffRating();
+		float foodDelta = this.getFoodBeverageRating() - r.getFoodBeverageRating();
+		float entertainmentDelta = this.getInflightEntertainmentRating() - r.getInflightEntertainmentRating();
+		float seatDelta = this.getSeatComfortRating() - r.getSeatComfortRating();
+		float moneyDelta = this.getValueMoneyRating() - r.getValueMoneyRating();
 
-		if ((this.getCabinStaffRating() <= (r.getCabinStaffRating() + limit))
-				&& (this.getCabinStaffRating() >= (r.getCabinStaffRating() - limit))) {
+		if (cabinDelta >= - 1 && cabinDelta <= 1) {
 			matches++;
 		}
-		if ((this.getFoodBeverageRating() <= (r.getFoodBeverageRating() + limit))
-				&& (this.getFoodBeverageRating() >= (r.getFoodBeverageRating() + limit))) {
+		if (foodDelta >= - 1 && foodDelta <= 1) {
 			matches++;
 		}
-		if ((this.getInflightEntertainmentRating() <= (r.getInflightEntertainmentRating() + limit))
-				&& (this.getInflightEntertainmentRating() >= (r.getInflightEntertainmentRating() - limit))) {
+		if (entertainmentDelta >= - 1 && entertainmentDelta <= 1) {
 			matches++;
 		}
-		if ((this.getSeatComfortRating() <= (r.getSeatComfortRating() + limit))
-				&& (this.getFoodBeverageRating() >= (r.getSeatComfortRating() - limit))) {
+		if (seatDelta >= - 1 && seatDelta <= 1) {
 			matches++;
 		}
-		if ((this.getValueMoneyRating() <= (r.getValueMoneyRating() + limit))
-				&& (this.getFoodBeverageRating() >= (r.getValueMoneyRating() - limit))) {
+		if (moneyDelta >= - 1 && moneyDelta <= 1) {
 			matches++;
 		}
 
@@ -200,10 +200,17 @@ public class ReviewAirline extends Review implements Comparable {
 					&& this.valueMoneyRating >= reviewAirline.getValueMoneyRating()
 					&& this.name.equals(reviewAirline.getName())){
 				return 1;
-			}else{
+			}else if (this.cabinClass.equals(reviewAirline.getCabinClass())
+					&& this.cabinStaffRating <= reviewAirline.getCabinStaffRating()
+					&& this.foodBeverageRating <= reviewAirline.getFoodBeverageRating()
+					&& this.inflightEntertainmentRating <= reviewAirline.getInflightEntertainmentRating()
+					&& this.seatComfortRating <= reviewAirline.getSeatComfortRating()
+					&& this.valueMoneyRating <= reviewAirline.getValueMoneyRating()
+					&& this.name.equals(reviewAirline.getName())){
 				return -1;
 			}
 		}
+		return -3;
 	
 	}
 

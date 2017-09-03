@@ -5,7 +5,6 @@ import java.util.HashMap;
 public class Vertex <E extends Comparable<E>> {
 
 	private E value;
-	HashMap<E,HashMap<E,E>> visitedPaths;
 	
 
 	public Vertex(E value) {
@@ -19,11 +18,6 @@ public class Vertex <E extends Comparable<E>> {
 
 	public void setValue(E value) {
 		this.value = value;
-	}
-	
-	public boolean addVisitedPath(E end, HashMap<E,E> visitedPath){
-		this.visitedPaths.put(end, visitedPath);
-		return true;
 	}
 
 	@Override

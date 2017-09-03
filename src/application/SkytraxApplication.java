@@ -60,7 +60,7 @@ public class SkytraxApplication extends JFrame {
 
 	public SkytraxApplication() {
 
-		loadData(cabinClass.get(ReviewAirline.Classes.ECONOMY), "data/skytrax_airline_review_test.csv");
+		loadData(cabinClass.get(ReviewAirline.Classes.ECONOMY), "data/skytrax_airline_review_test_150.csv");
 		initUI();
 
 	}
@@ -103,7 +103,7 @@ public class SkytraxApplication extends JFrame {
 		guigraph.addAttribute("ui.stylesheet",
 				"node{ shape: circle; size: 18px, 18px;fill-mode: plain; fill-color: red; stroke-mode: plain; stroke-color: blue; } node#\""
 						+ String.valueOf(worst.getId()) + "\" {fill-color: yellow; } node#\""
-						+ String.valueOf(best.getId()) + "\" {fill-color: green; }  edge{shape: cubic-curve; } edge.path{fill-color: green; }");
+						+ String.valueOf(best.getId()) + "\" {fill-color: green; }  edge{shape: line; } edge.path{fill-color: green; }");
 		guigraph.addAttribute("ui.quality");
 		guigraph.addAttribute("ui.antialias");
 
@@ -124,7 +124,7 @@ public class SkytraxApplication extends JFrame {
 		userPanel.setBackground(Color.LIGHT_GRAY);
 
 		numVerticesLabel = new JLabel("#Vertices: " + String.valueOf(((CapGraph) graph).getNumVertices()));
-		numEdgesLabel = new JLabel("#Edges: " + String.valueOf(((CapGraph) graph).getNumEdges() / 2));
+		numEdgesLabel = new JLabel("#Edges: " + String.valueOf(((CapGraph) graph).getNumEdges()));
 		cabinClassesLabel = new JLabel("Cabin Classes");
 		fileLabel = new JLabel("File");
 		fileLabel.hide();
@@ -154,6 +154,7 @@ public class SkytraxApplication extends JFrame {
 		comboFiles.setPreferredSize(new Dimension(150, 20));
 
 		// add items to the combo box
+		comboFiles.addItem("data/skytrax_airline_review_test_150.csv");
 		comboFiles.addItem("data/skytrax_airline_review_test.csv");
 		comboFiles.addItem("data/skytrax_airline_review.csv");
 		comboFiles.addActionListener(cbActionListener);
@@ -170,6 +171,7 @@ public class SkytraxApplication extends JFrame {
 				System.out.println("Button Easy 1 Pressed");
 				LinkedList<Reviewer> path = (LinkedList<Reviewer>) ((CapGraph) graph).degreesOfSeparation(worst, best);
 
+				System.out.println(path);
 				if (path != null) {
 					Reviewer curr = null;
 					Reviewer prev = null;
@@ -248,7 +250,7 @@ public class SkytraxApplication extends JFrame {
 		mainPanel.remove((Component) graphPanel);
 		initGraphPanel();
 		numVerticesLabel.setText("#Vertices: " + String.valueOf(((CapGraph) graph).getNumVertices()));
-		numEdgesLabel.setText("#Edges: " + String.valueOf(((CapGraph) graph).getNumEdges() / 2));
+		numEdgesLabel.setText("#Edges: " + String.valueOf(((CapGraph) graph).getNumEdges()));
 		mainPanel.add((Component) graphPanel, BorderLayout.LINE_START);
 		((Component) graphPanel).repaint();
 		((Component) graphPanel).revalidate();

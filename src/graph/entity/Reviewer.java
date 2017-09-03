@@ -180,7 +180,7 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 	// TODO
 	@Override
 	public int compareTo(Reviewer o) {
-
+		System.out.println("Compare Reviewer");
 		return 0;
 	}
 
