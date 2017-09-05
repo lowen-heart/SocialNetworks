@@ -242,7 +242,7 @@ public class CapGraph implements Graph {
 		Vertex<Reviewer> v = new Vertex<Reviewer>(reviewer);
 
 		for (Edge<Reviewer> edge : adjListMap.get(v)) {
-			//System.out.println("Neighbor " + v.getValue().getSurname() + " : " + edge.getTo());
+			//System.out.println("Neighbor " + v.getValue().getId() + " : " + edge.getTo());
 			neighbors.add(edge.getTo());
 		}
 
@@ -376,13 +376,13 @@ public class CapGraph implements Graph {
 		HashSet<Reviewer> visitedStart = new HashSet<Reviewer>();
 		HashMap<Reviewer, Reviewer> parentStart = new HashMap<Reviewer, Reviewer>();
 		queueStart.add(start);
-		//visitedStart.add(start);
+		visitedStart.add(start);
 
 		Queue<Reviewer> queueEnd = new LinkedList<Reviewer>();
 		HashSet<Reviewer> visitedEnd = new HashSet<Reviewer>();
 		HashMap<Reviewer, Reviewer> parentEnd = new HashMap<Reviewer, Reviewer>();
 		queueEnd.add(end);
-		//visitedEnd.add(end);
+		visitedEnd.add(end);
 
 		List<Reviewer> pathFromStart = new LinkedList<Reviewer>();
 		List<Reviewer> pathFromEnd = new LinkedList<Reviewer>();
@@ -405,31 +405,32 @@ public class CapGraph implements Graph {
 		System.out.println("Print Path");
 		LinkedList<Reviewer> path = new LinkedList<Reviewer>();
 
-		Reviewer curr = end;
+		Reviewer curr = collisionReviewer;
 		//Reviewer prev = null;
 		// while we have not reached the start add the current node visited as
 		// first node inside the path
 		// doing so we are creating the path from the start to the end
-		while (!curr.equals(collisionReviewer)) {
-				path.addFirst(curr);
-				//prev = curr;
-				curr = parentStart.get(curr);
-				//parentStart.remove(prev);
-		}
-		
-		path.addFirst(collisionReviewer);
-		
-		curr = parentEnd.get(curr);
-		
-		while (!curr.equals(start)) {			
+		while (!curr.equals(end)) {
 				path.addFirst(curr);
 				//prev = curr;
 				curr = parentEnd.get(curr);
 				//parentStart.remove(prev);
 		}
 		
+		path.addFirst(end);
+		//path.addLast(collisionReviewer);
+		
+		curr = parentStart.get(collisionReviewer);
+		
+		while (!curr.equals(start)) {			
+				path.addLast(curr);
+				//prev = curr;
+				curr = parentStart.get(curr);
+				//parentEnd.remove(prev);
+		}
+		
 		// add start to the begin
-		path.addFirst(start);
+		path.addLast(start);
 
 		System.out.println("Done");
 		
@@ -443,38 +444,6 @@ public class CapGraph implements Graph {
 		while (!queueStart.isEmpty() && !queueEnd.isEmpty()) {
 			Reviewer currFromStart = queueStart.remove();
 			Reviewer currFromEnd = queueEnd.remove();
-
-			List<Vertex<Reviewer>> neighborsStart = getNeighbors(currFromStart);
-			ListIterator<Vertex<Reviewer>> neighStartIter = neighborsStart.listIterator(neighborsStart.size());
-
-			while (neighStartIter.hasPrevious()) {
-				Reviewer nextStart = neighStartIter.previous().getValue();
-				//System.out.println("Next Start:" + nextStart);
-				if (!visitedStart.contains(nextStart)) {
-					visitedStart.add(nextStart);
-					parentStart.put(nextStart,currFromStart);
-					queueStart.add(nextStart);
-				}
-			}
-			
-			//System.out.println("CurrFromStart: " + currFromStart);
-			pathFromStart.add(currFromStart);
-
-			List<Vertex<Reviewer>> neighborsEnd = getNeighbors(currFromEnd);
-			ListIterator<Vertex<Reviewer>> neighEndIter = neighborsEnd.listIterator(neighborsEnd.size());
-
-			while (neighEndIter.hasPrevious()) {
-				Reviewer nextEnd = neighEndIter.previous().getValue();
-				//System.out.println("Next End:" + nextEnd);
-				if (!visitedEnd.contains(nextEnd)) {
-					visitedEnd.add(nextEnd);
-					parentEnd.put(nextEnd,currFromEnd);
-					queueEnd.add(nextEnd);
-				}
-			}
-			
-			//System.out.println("CurrFromEnd: " + currFromEnd);
-			pathFromEnd.add(currFromEnd);
 			
 			for(Reviewer pfs : pathFromStart){
 				for(Reviewer pfe: pathFromEnd){
@@ -486,6 +455,48 @@ public class CapGraph implements Graph {
 					}
 				}
 			}
+			
+			pathFromStart.clear();
+			pathFromEnd.clear();
+
+			List<Vertex<Reviewer>> neighborsStart = getNeighbors(currFromStart);
+			ListIterator<Vertex<Reviewer>> neighStartIter = neighborsStart.listIterator(neighborsStart.size());
+
+			while (neighStartIter.hasPrevious()) {
+				Reviewer nextStart = neighStartIter.previous().getValue();
+				//System.out.println("CurrFromStart: " + currFromStart);
+				pathFromStart.add(nextStart);
+				//System.out.println("Next Start:" + nextStart);
+				if (!visitedStart.contains(nextStart)) {
+					visitedStart.add(nextStart);
+					parentStart.put(nextStart,currFromStart);
+					System.out.println("Next: " + nextStart.getId() + " Curr: " + currFromStart.getId());
+					queueStart.add(nextStart);
+					
+				}
+			}
+			
+			
+
+			List<Vertex<Reviewer>> neighborsEnd = getNeighbors(currFromEnd);
+			ListIterator<Vertex<Reviewer>> neighEndIter = neighborsEnd.listIterator(neighborsEnd.size());
+
+			while (neighEndIter.hasPrevious()) {
+				Reviewer nextEnd = neighEndIter.previous().getValue();
+				//System.out.println("CurrFromStart: " + currFromStart);
+				pathFromEnd.add(nextEnd);
+				//System.out.println("Next End:" + nextEnd);
+				if (!visitedEnd.contains(nextEnd)) {
+					visitedEnd.add(nextEnd);
+					parentEnd.put(nextEnd,currFromEnd);
+					System.out.println("Next End: " + nextEnd.getId() + " Curr: " + currFromEnd.getId());
+					
+					queueEnd.add(nextEnd);
+					
+					
+				}
+			}
+			
 
 		}
 		

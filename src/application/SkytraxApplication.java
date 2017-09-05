@@ -52,6 +52,7 @@ public class SkytraxApplication extends JFrame {
 	JLabel numEdgesLabel;
 	JLabel cabinClassesLabel;
 	JLabel fileLabel;
+	JLabel degreeOfSeparation;
 	JComboBox<String> comboClasses;
 	JComboBox<String> comboFiles;
 	JButton easyQuestion;
@@ -103,7 +104,7 @@ public class SkytraxApplication extends JFrame {
 		guigraph.addAttribute("ui.stylesheet",
 				"node{ shape: circle; size: 18px, 18px;fill-mode: plain; fill-color: red; stroke-mode: plain; stroke-color: blue; } node#\""
 						+ String.valueOf(worst.getId()) + "\" {fill-color: yellow; } node#\""
-						+ String.valueOf(best.getId()) + "\" {fill-color: green; }  edge{shape: line; } edge.path{fill-color: green; }");
+						+ String.valueOf(best.getId()) + "\" {fill-color: green; }  edge{shape: line; fill-color: lightgray;} edge.path{fill-color: green; shape: blob;}");
 		guigraph.addAttribute("ui.quality");
 		guigraph.addAttribute("ui.antialias");
 
@@ -177,7 +178,7 @@ public class SkytraxApplication extends JFrame {
 					Reviewer prev = null;
 					for (Reviewer r : path) {
 						curr = r;
-						System.out.println("Current " + curr.toString());
+						//System.out.println("Current " + curr.toString());
 						if (prev != null) {
 							System.out.println("Previous " + prev.toString());
 							
@@ -185,14 +186,16 @@ public class SkytraxApplication extends JFrame {
 							
 							if(guigraph.getEdge(String.valueOf(curr.getId()) + "-" + String.valueOf(prev.getId())) == null){
 								guigraph.getEdge(String.valueOf(prev.getId()) + "-" + String.valueOf(curr.getId())).addAttribute("ui.class", "path");
-								System.out.println("Entrato 1 " + curr.toString());
+								//System.out.println("Entrato 1 " + curr.toString());
 							}else{
 								guigraph.getEdge(String.valueOf(curr.getId()) + "-" + String.valueOf(prev.getId())).addAttribute("ui.class", "path");
-								System.out.println("Entrato 2" + curr.toString());
+								//System.out.println("Entrato 2 " + curr.toString());
 							}		
 						}
 						prev = curr;
 					}
+					
+					degreeOfSeparation.setText("Degree of separation: " + (path.size()-1));
 					
 					((Component) graphPanel).repaint();
 					((Component) graphPanel).revalidate();
@@ -233,6 +236,9 @@ public class SkytraxApplication extends JFrame {
 
 		diffQuestion.addActionListener(dqActionListener);
 
+		degreeOfSeparation = new JLabel("Degree of separation");
+		
+		
 		userPanel.add(numVerticesLabel);
 		userPanel.add(numEdgesLabel);
 		userPanel.add(cabinClassesLabel);
@@ -242,6 +248,7 @@ public class SkytraxApplication extends JFrame {
 		userPanel.add(easyQuestion);
 		userPanel.add(easyQuestion2);
 		userPanel.add(diffQuestion);
+		userPanel.add(degreeOfSeparation);
 	}
 
 	private void reloadData() {
@@ -252,6 +259,7 @@ public class SkytraxApplication extends JFrame {
 		numVerticesLabel.setText("#Vertices: " + String.valueOf(((CapGraph) graph).getNumVertices()));
 		numEdgesLabel.setText("#Edges: " + String.valueOf(((CapGraph) graph).getNumEdges()));
 		mainPanel.add((Component) graphPanel, BorderLayout.LINE_START);
+		degreeOfSeparation.setText("Degree of separation:");
 		((Component) graphPanel).repaint();
 		((Component) graphPanel).revalidate();
 
