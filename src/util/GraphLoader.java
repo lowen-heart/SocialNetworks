@@ -78,7 +78,7 @@ public class GraphLoader {
 				index++;
 			}
 			System.out.println("LOADED");
-		} catch (IOException e) {
+		} catch (IOException | IllegalAccessException e) {
 			e.printStackTrace();
 		} finally {
 			try {
@@ -228,7 +228,7 @@ public class GraphLoader {
 
 	// Utility which converts CSV to ArrayList using Split Operation
 	private static boolean utilityCSVtoList(int index, String line, graph.Graph g, Graph guigraph, String cabinClass,
-			Set<Reviewer> seen) {
+			Set<Reviewer> seen) throws IllegalAccessException {
 		List<Person> result = new ArrayList<Person>();
 
 		if (line != null) {

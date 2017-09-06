@@ -2,8 +2,13 @@ package graph.entity;
 
 import java.time.LocalDate;
 
-public class ReviewAirline extends Review implements Comparable {
+/**
+ * @author loris
+ *
+ */
+public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 
+	
 	public enum Classes {
 		ECONOMY, PREMIUMECONOMY, BUSINESS, FIRSTCLASS, EMPTY
 	};
@@ -16,11 +21,40 @@ public class ReviewAirline extends Review implements Comparable {
 	private float inflightEntertainmentRating;
 	private float valueMoneyRating;
 
+	/**
+	 * @param date
+	 * @param content
+	 * @param cabinClass
+	 * @param overallRating
+	 * @param name
+	 * @param seatComfortRating
+	 * @param cabinStaffRating
+	 * @param foodBeverageRating
+	 * @param inflightEntertainmentRating
+	 * @param valueMoneyRating
+	 * @param recommended
+	 */
 	public ReviewAirline(LocalDate date, String content, String cabinClass, float overallRating, String name,
 			float seatComfortRating, float cabinStaffRating, float foodBeverageRating,
 			float inflightEntertainmentRating, float valueMoneyRating, boolean recommended) {
 
 		super(date, content, overallRating, recommended);
+		
+		if(seatComfortRating < 0 || seatComfortRating > 5){
+			throw new IllegalArgumentException("Seat comfort rating is less than 0 or greater than 5");
+		}
+		if(cabinStaffRating < 0 || cabinStaffRating > 5){
+			throw new IllegalArgumentException("Cabin staff rating is less than 0 or greater than 5");
+		}
+		if(foodBeverageRating < 0 || foodBeverageRating > 5){
+			throw new IllegalArgumentException("Food and beverage rating is less than 0 or greater than 5");
+		}
+		if(inflightEntertainmentRating < 0 || inflightEntertainmentRating > 5){
+			throw new IllegalArgumentException("In-flight entertainment rating is less than 0 or greater than 5");
+		}
+		if(valueMoneyRating < 0 || valueMoneyRating > 5){
+			throw new IllegalArgumentException("Value money rating is less than 0 or greater than 5");
+		}
 
 		this.name = name;
 		switch (cabinClass) {
@@ -53,68 +87,121 @@ public class ReviewAirline extends Review implements Comparable {
 
 	}
 
+	/**
+	 * @param cabinClass
+	 */
 	public ReviewAirline(String cabinClass) {
 		this(LocalDate.now(), "", cabinClass, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, false);
 	}
 
+	/**
+	 * @return
+	 */
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
+	/**
+	 * @return
+	 */
 	public String getCabinClass() {
 		return cabinClass;
 	}
 
-	public void setCabinClass(String cabinClass) {
-		this.cabinClass = cabinClass;
-	}
-
+	/**
+	 * @return
+	 */
 	public float getSeatComfortRating() {
 		return seatComfortRating;
 	}
 
+	/**
+	 * @param seatComfortRating
+	 */
 	public void setSeatComfortRating(float seatComfortRating) {
+		if(seatComfortRating < 0 || seatComfortRating > 5){
+			throw new IllegalArgumentException("Seat comfort rating is less than 0 or greater than 5");
+		}
 		this.seatComfortRating = seatComfortRating;
 	}
 
+	/**
+	 * @return
+	 */
 	public float getCabinStaffRating() {
 		return cabinStaffRating;
 	}
 
+	/**
+	 * @param cabinStaffRating
+	 */
 	public void setCabinStaffRating(float cabinStaffRating) {
+		if(cabinStaffRating < 0 || cabinStaffRating > 5){
+			throw new IllegalArgumentException("Cabin staff rating is less than 0 or greater than 5");
+		}
 		this.cabinStaffRating = cabinStaffRating;
 	}
 
+	/**
+	 * @return
+	 */
 	public float getFoodBeverageRating() {
 		return foodBeverageRating;
 	}
 
+	/**
+	 * @param foodBeverageRating
+	 */
 	public void setFoodBeverageRating(float foodBeverageRating) {
+		if(foodBeverageRating < 0 || foodBeverageRating > 5){
+			throw new IllegalArgumentException("Food and beverage rating is less than 0 or greater than 5");
+		}
 		this.foodBeverageRating = foodBeverageRating;
 	}
 
+	/**
+	 * @return
+	 */
 	public float getInflightEntertainmentRating() {
 		return inflightEntertainmentRating;
 	}
 
+	/**
+	 * @param inflightEntertainmentRating
+	 */
 	public void setInflightEntertainmentRating(float inflightEntertainmentRating) {
+		if(inflightEntertainmentRating < 0 || inflightEntertainmentRating > 5){
+			throw new IllegalArgumentException("In-flight entertainment rating is less than 0 or greater than 5");
+		}
 		this.inflightEntertainmentRating = inflightEntertainmentRating;
 	}
 
+	/**
+	 * @return
+	 */
 	public float getValueMoneyRating() {
 		return valueMoneyRating;
 	}
 
+	/**
+	 * @param valueMoneyRating
+	 */
 	public void setValueMoneyRating(float valueMoneyRating) {
+		if(valueMoneyRating < 0 || valueMoneyRating > 5){
+			throw new IllegalArgumentException("Value money rating is less than 0 or greater than 5");
+		}
 		this.valueMoneyRating = valueMoneyRating;
 	}
 
+	/**
+	 * @param r
+	 * @return
+	 */
 	public boolean matches(ReviewAirline r) {
 
+		if(r == null){
+			throw new NullPointerException("Airline review is nulls");
+		}
 		int matches = 0;
 		
 		float cabinDelta = this.getCabinStaffRating() - r.getCabinStaffRating();
@@ -146,6 +233,9 @@ public class ReviewAirline extends Review implements Comparable {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see graph.entity.Review#toString()
+	 */
 	@Override
 	public String toString() {
 		return super.toString() + " ; ReviewAirline [name=" + name + ", cabinClass=" + cabinClass
@@ -154,6 +244,9 @@ public class ReviewAirline extends Review implements Comparable {
 				+ inflightEntertainmentRating + ", valueMoneyRating=" + valueMoneyRating + "]";
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 
@@ -178,8 +271,11 @@ public class ReviewAirline extends Review implements Comparable {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
-	public int compareTo(Object o) {
+	public int compareTo(ReviewAirline o) {
 
 		if (this == o)
 			return 0;
@@ -210,8 +306,9 @@ public class ReviewAirline extends Review implements Comparable {
 				return -1;
 			}
 		}
+		
 		return -3;
 	
 	}
-
+	
 }

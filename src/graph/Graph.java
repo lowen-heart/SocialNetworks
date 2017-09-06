@@ -15,7 +15,7 @@ public interface Graph {
     public void addEdge(Reviewer from, Reviewer to);
 
     /* Finds the egonet centered at a given node. */
-    public Graph getEgonet(int center);
+    public Graph getEgonet(int center) throws IllegalAccessException;
 
     /* Returns all SCCs in a directed graph. Recall that the warm up
      * assignment assumes all Graphs are directed, and we will only 

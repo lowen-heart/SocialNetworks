@@ -7,7 +7,6 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -68,7 +67,12 @@ public class SkytraxApplication extends JFrame {
 
 	private void loadData(String cabinClass, String file) {
 
-		graph = new CapGraph();
+		try {
+			graph = new CapGraph();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		guigraph = new MultiGraph("Skytrax Airline Reviews");
 
 		GraphLoader.loadAirportsReviewsFromCSV(graph, guigraph, cabinClass, file);

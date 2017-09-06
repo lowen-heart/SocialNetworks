@@ -7,51 +7,66 @@ public class Person{
 	private String surname;
 	private String country;
 	
-	public Person(int id, String name, String surname, String country) {
+	/**
+	 * @param id
+	 * @param name
+	 * @param surname
+	 * @param country
+	 * @throws IllegalAccessException 
+	 */
+	public Person(int id, String name, String surname, String country) throws IllegalAccessException {
 		super();
+		if(id < 0){
+			throw new IllegalAccessException("Id is less than 0");
+		}
+		if(name == null || surname == null || country == null){
+			throw new IllegalAccessException("Name, surname or country is null");
+		}
 		this.id = id;
 		this.name = name;
 		this.surname = surname;
 		this.country = country;
 	}
 
+	/**
+	 * @return
+	 */
 	public int getId() {
 		return id;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
-
+	/**
+	 * @return
+	 */
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
+	/**
+	 * @return
+	 */
 	public String getSurname() {
 		return surname;
 	}
 
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
-
+	/**
+	 * @return
+	 */
 	public String getCountry() {
 		return country;
 	}
 
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "Person [id=" + id + ", name=" + name + ", surname=" + surname + ", country=" + country + "]";
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
@@ -69,6 +84,9 @@ public class Person{
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
     public int hashCode() {
         int result = name.hashCode();

@@ -1,6 +1,5 @@
 package graph.entity;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +20,14 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 	private List<ReviewAirline> emptyReviews;
 	private ReviewAirline avgEmptyReview;
 
-	public Reviewer(int id, String name, String surname, String country) {
+	/**
+	 * @param id
+	 * @param name
+	 * @param surname
+	 * @param country
+	 * @throws IllegalAccessException
+	 */
+	public Reviewer(int id, String name, String surname, String country) throws IllegalAccessException {
 		// super(id, name, surname, country);
 		this(id, name, surname, country, new ArrayList<ReviewAirline>(),
 				new ReviewAirline(ReviewAirline.Classes.ECONOMY.toString()), new ArrayList<ReviewAirline>(),
@@ -31,12 +37,36 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 				new ReviewAirline(ReviewAirline.Classes.EMPTY.toString()));
 	}
 
-	public Reviewer(int id, String name, String surname, String country, List<ReviewAirline> economyReviews,
+	/**
+	 * @param id
+	 * @param name
+	 * @param surname
+	 * @param country
+	 * @param economyReviews
+	 * @param avgEconomyReview
+	 * @param premiumReviews
+	 * @param avgPremiumReview
+	 * @param businessReviews
+	 * @param avgBusinessReview
+	 * @param firstReviews
+	 * @param avgFirstReview
+	 * @param emptyReviews
+	 * @param avgEmptyReview
+	 * @throws IllegalAccessException
+	 * @throws NullPointerException
+	 */
+	public Reviewer (int id, String name, String surname, String country, List<ReviewAirline> economyReviews,
 			ReviewAirline avgEconomyReview, List<ReviewAirline> premiumReviews, ReviewAirline avgPremiumReview,
 			List<ReviewAirline> businessReviews, ReviewAirline avgBusinessReview, List<ReviewAirline> firstReviews,
-			ReviewAirline avgFirstReview, List<ReviewAirline> emptyReviews, ReviewAirline avgEmptyReview) {
+			ReviewAirline avgFirstReview, List<ReviewAirline> emptyReviews, ReviewAirline avgEmptyReview)
+			throws IllegalAccessException, NullPointerException{
 
 		super(id, name, surname, country);
+		if (economyReviews == null || avgEconomyReview == null || premiumReviews == null || avgPremiumReview == null
+				|| businessReviews == null || avgBusinessReview == null || firstReviews == null
+				|| avgFirstReview == null || emptyReviews == null || avgEmptyReview == null) {
+			throw new NullPointerException("One or more arguments passed is/are null");
+		}
 		this.economyReviews = economyReviews;
 		this.avgEconomyReview = avgEconomyReview;
 		this.premiumReviews = premiumReviews;
@@ -50,47 +80,48 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 
 	}
 
+	/**
+	 * @return
+	 */
 	public ReviewAirline getAvgEconomyReview() {
 		return avgEconomyReview;
 	}
 
-	public void setAvgEconomyReview(ReviewAirline avgEconomyReview) {
-		this.avgEconomyReview = avgEconomyReview;
-	}
-
+	/**
+	 * @return
+	 */
 	public ReviewAirline getAvgPremiumReview() {
 		return avgPremiumReview;
 	}
 
-	public void setAvgPremiumReview(ReviewAirline avgPremiumReview) {
-		this.avgPremiumReview = avgPremiumReview;
-	}
-
+	/**
+	 * @return
+	 */
 	public ReviewAirline getAvgBusinessReview() {
 		return avgBusinessReview;
 	}
-
-	public void setAvgBusinessReview(ReviewAirline avgBusinessReview) {
-		this.avgBusinessReview = avgBusinessReview;
-	}
-
+	
+	/**
+	 * @return
+	 */
 	public ReviewAirline getAvgFirstReview() {
 		return avgFirstReview;
 	}
 
-	public void setAvgFirstReview(ReviewAirline avgFirstReview) {
-		this.avgFirstReview = avgFirstReview;
-	}
-
+	/**
+	 * @return
+	 */
 	public ReviewAirline getAvgEmptyReview() {
 		return avgEmptyReview;
 	}
 
-	public void setAvgEmptyReview(ReviewAirline avgEmptyReview) {
-		this.avgEmptyReview = avgEmptyReview;
-	}
-
+	/**
+	 * @param ra
+	 */
 	public void addReview(ReviewAirline ra) {
+		if(ra == null){
+			throw new NullPointerException("Argument passed is null");
+		}
 		switch (ra.getCabinClass()) {
 		case "ECONOMY":
 			economyReviews.add(ra);
@@ -115,7 +146,14 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 		}
 	}
 
+	/**
+	 * @param ra
+	 * @param avg
+	 */
 	private void calculateAvgReview(List<ReviewAirline> ra, ReviewAirline avg) {
+		if(ra == null  || avg == null){
+			throw new NullPointerException("One or more arguments passed is/are null");
+		}
 		ReviewAirline temp = new ReviewAirline(avg.getCabinClass());
 
 		for (ReviewAirline r : ra) {
@@ -139,26 +177,46 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 
 	}
 
+	/**
+	 * @return
+	 */
 	public List<ReviewAirline> getEconomyReviews() {
 		return economyReviews;
 	}
 
+	/**
+	 * @return
+	 */
 	public List<ReviewAirline> getPremiumReviews() {
 		return premiumReviews;
 	}
 
+	/**
+	 * @return
+	 */
 	public List<ReviewAirline> getBusinessReviews() {
 		return businessReviews;
 	}
 
+	/**
+	 * @return
+	 */
 	public List<ReviewAirline> getFirstReviews() {
 		return firstReviews;
 	}
 
+	/**
+	 * @return
+	 */
 	public List<ReviewAirline> getEmptyReviews() {
 		return emptyReviews;
 	}
 
+	/**
+	 * @param r
+	 * @param cabinClass
+	 * @return
+	 */
 	public boolean reviewersCloseness(Reviewer r, String cabinClass) {
 
 		switch (cabinClass) {
@@ -178,17 +236,32 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 	}
 
 	// TODO
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(Reviewer o) {
 		System.out.println("Compare Reviewer");
 		return 0;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see graph.entity.Person#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		return super.equals(obj);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see graph.entity.Person#toString()
+	 */
 	@Override
 	public String toString() {
 		return super.toString() + " ; Reviewer [economyReviews=" + economyReviews + ", avgEconomyReview="
@@ -198,6 +271,11 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 				+ emptyReviews + ", avgEmptyReview=" + avgEmptyReview + "]";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see graph.entity.Person#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		return super.hashCode();

@@ -35,7 +35,7 @@ public class CapGraph implements Graph {
 	private Vertex<Reviewer> best;
 	private Vertex<Reviewer> worst;
 
-	public CapGraph() {
+	public CapGraph() throws IllegalAccessException {
 		super();
 		adjListMap = new HashMap<Vertex<Reviewer>, ArrayList<Edge<Reviewer>>>();
 		// vertices = new HashMap<Reviewer, Vertex<Reviewer>>();
@@ -155,7 +155,13 @@ public class CapGraph implements Graph {
 		 * if(!this.isVertex(center)){ throw new
 		 * IllegalArgumentException("This is not a vertex of the graph"); }
 		 */
-		Graph egonet = new CapGraph();
+		Graph egonet = null;
+		try {
+			egonet = new CapGraph();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		/*
 		 * ArrayList<Vertex<Integer>> neighbors = getNeighbors(center);
 		 * egonet.addVertex(center); for(Vertex<Integer> i : neighbors){
@@ -340,7 +346,13 @@ public class CapGraph implements Graph {
 	 *            transpose graph
 	 */
 	private Graph buildSubGraph(Set<Vertex<Reviewer>> vertices, boolean transpose) {
-		CapGraph g = new CapGraph();
+		CapGraph g = null;
+		try {
+			g = new CapGraph();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		for (Vertex<Reviewer> from : vertices) {
 			if (!g.isVertex(from.getValue())) {
 				g.addVertex(from.getValue());
