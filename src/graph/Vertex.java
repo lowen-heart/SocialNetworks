@@ -1,16 +1,24 @@
 package graph;
 
-import java.util.HashMap;
-
 public class Vertex <E extends Comparable<E>> {
 
 	private E value;
 	
+	int degree; //degree of the vertex
+	int neighborDeg; //sum of degree of neighbors vertices
 
 	public Vertex(E value) {
 		super();
 		this.value = value;
+		this.degree = 0;
+		this.neighborDeg = 0;
 	}
+	
+	public Vertex (int index, int degree){
+		this.degree = degree;
+		neighborDeg = 0;
+	}
+
 
 	public E getValue() {
 		return value;
@@ -20,6 +28,28 @@ public class Vertex <E extends Comparable<E>> {
 		this.value = value;
 	}
 
+	public int getDegree() {
+		return degree;
+	}
+
+	public void setDegree(int degree) {
+		if(degree < 0){
+			throw new IllegalArgumentException("degree must be greater than 0");
+		}
+		this.degree = degree;
+	}
+
+	public int getNeighborDeg() {
+		return neighborDeg;
+	}
+
+	public void setNebDeg(int nebDeg) {
+		if(nebDeg < 0){
+			throw new IllegalArgumentException("Neighbours degree must be greater than 0");
+		}
+		this.neighborDeg = nebDeg;
+	}
+
 	@Override
 	public boolean equals(Object obj){
 		if (!(obj instanceof Vertex))
@@ -27,9 +57,15 @@ public class Vertex <E extends Comparable<E>> {
 	    if (obj == this)
 	        return true;
 
-	    Vertex<E> vertex = (Vertex<E>) obj; 
+	    Vertex<?> vertex = (Vertex<?>) obj; 
 	    //System.out.println("Equals Vertex: " + this.value.toString() + "," + vertex.value.toString());
 	    return (this.value != null && this.value.equals(vertex.value));
+	}
+	
+	// there is no equal to maintain a non-increasing order
+	public int compareTo(Vertex<?> v){
+		if(degree < v.degree || degree == v.degree) return 1;
+		return -1;
 	}
 	
 	@Override
@@ -44,5 +80,6 @@ public class Vertex <E extends Comparable<E>> {
 	public String toString() {
 		return value.toString();
 	}
+
 	
 }

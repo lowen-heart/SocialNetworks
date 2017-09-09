@@ -55,13 +55,17 @@ public class Person{
 	public String getCountry() {
 		return country;
 	}
+	
+	public String print() {
+		return "Person [id=" + id + ", name=" + name + ", surname=" + surname + ", country=" + country + "]";
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "Person [id=" + id + ", name=" + name + ", surname=" + surname + ", country=" + country + "]";
+		return "[id=" + id + ", name=" + name + ", surname=" + surname + "]";
 	}
 
 	/* (non-Javadoc)

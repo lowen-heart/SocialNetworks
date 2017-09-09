@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -29,7 +30,17 @@ import util.GraphLoader;
 
 public class SkytraxApplication extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9080966197484218070L;
+
 	HashMap<Classes, String> cabinClass = new HashMap<Classes, String>() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -2156037618641583793L;
+
 		{
 			put(ReviewAirline.Classes.ECONOMY, "Economy");
 			put(ReviewAirline.Classes.BUSINESS, "Business Class");
@@ -51,7 +62,7 @@ public class SkytraxApplication extends JFrame {
 	JLabel numEdgesLabel;
 	JLabel cabinClassesLabel;
 	JLabel fileLabel;
-	JLabel degreeOfSeparation;
+	JLabel result;
 	JComboBox<String> comboClasses;
 	JComboBox<String> comboFiles;
 	JButton easyQuestion;
@@ -108,7 +119,8 @@ public class SkytraxApplication extends JFrame {
 		guigraph.addAttribute("ui.stylesheet",
 				"node{ shape: circle; size: 18px, 18px;fill-mode: plain; fill-color: red; stroke-mode: plain; stroke-color: blue; } node#\""
 						+ String.valueOf(worst.getId()) + "\" {fill-color: yellow; } node#\""
-						+ String.valueOf(best.getId()) + "\" {fill-color: green; }  edge{shape: line; fill-color: lightgray;} edge.path{fill-color: green; shape: blob;}");
+						+ String.valueOf(best.getId())
+						+ "\" {fill-color: green; }  edge{shape: line; fill-color: lightgray;} edge.path{fill-color: green; shape: blob;}");
 		guigraph.addAttribute("ui.quality");
 		guigraph.addAttribute("ui.antialias");
 
@@ -132,7 +144,7 @@ public class SkytraxApplication extends JFrame {
 		numEdgesLabel = new JLabel("#Edges: " + String.valueOf(((CapGraph) graph).getNumEdges()));
 		cabinClassesLabel = new JLabel("Cabin Classes");
 		fileLabel = new JLabel("File");
-		fileLabel.hide();
+		fileLabel.setVisible(false);
 
 		// create an empty combo box with items of type String
 		comboClasses = new JComboBox<String>();
@@ -173,39 +185,18 @@ public class SkytraxApplication extends JFrame {
 			// change
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
 				System.out.println("Button Easy 1 Pressed");
 				LinkedList<Reviewer> path = (LinkedList<Reviewer>) ((CapGraph) graph).degreesOfSeparation(worst, best);
 
-				System.out.println(path);
-				if (path != null) {
-					Reviewer curr = null;
-					Reviewer prev = null;
-					for (Reviewer r : path) {
-						curr = r;
-						//System.out.println("Current " + curr.toString());
-						if (prev != null) {
-							System.out.println("Previous " + prev.toString());
-							
-							//System.out.println((guigraph.getEdge(String.valueOf(prev.getId()) + "-" + String.valueOf(curr.getId()))).toString());
-							
-							if(guigraph.getEdge(String.valueOf(curr.getId()) + "-" + String.valueOf(prev.getId())) == null){
-								guigraph.getEdge(String.valueOf(prev.getId()) + "-" + String.valueOf(curr.getId())).addAttribute("ui.class", "path");
-								//System.out.println("Entrato 1 " + curr.toString());
-							}else{
-								guigraph.getEdge(String.valueOf(curr.getId()) + "-" + String.valueOf(prev.getId())).addAttribute("ui.class", "path");
-								//System.out.println("Entrato 2 " + curr.toString());
-							}		
-						}
-						prev = curr;
-					}
-					
-					degreeOfSeparation.setText("Degree of separation: " + (path.size()-1));
-					
-					((Component) graphPanel).repaint();
-					((Component) graphPanel).revalidate();
-				}
+				printPath(path);
 
+				result.setText("Degree of separation: " + (path.size() - 1));
+
+				((Component) graphPanel).repaint();
+				((Component) graphPanel).revalidate();
 			}
+
 		};
 
 		easyQuestion.addActionListener(eq1ActionListener);
@@ -234,15 +225,34 @@ public class SkytraxApplication extends JFrame {
 			// change
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Button Pressed");
+				System.out.println("Button Difficult Pressed");
+
+				long cpuTime = System.currentTimeMillis();
+
+				LinkedList<Reviewer> vertices = ((CapGraph) graph).search();
+
+				cpuTime = System.currentTimeMillis() - cpuTime;
+
+				System.out.println("CPU Time: " + cpuTime);
+
+				printClique(vertices);
+
+				if(cpuTime < 1000){
+					result.setText("CPUTime: " + cpuTime + " ms; Max Clique: " + ((CapGraph) graph).getMaxSize());
+				}else{
+					result.setText("CPUTime: " + cpuTime/1000 + " s; Max Clique: " + ((CapGraph) graph).getMaxSize());
+				}
+				
+
+				((Component) graphPanel).repaint();
+				((Component) graphPanel).revalidate();
 			}
 		};
 
 		diffQuestion.addActionListener(dqActionListener);
 
-		degreeOfSeparation = new JLabel("Degree of separation");
-		
-		
+		result = new JLabel("");
+
 		userPanel.add(numVerticesLabel);
 		userPanel.add(numEdgesLabel);
 		userPanel.add(cabinClassesLabel);
@@ -252,7 +262,7 @@ public class SkytraxApplication extends JFrame {
 		userPanel.add(easyQuestion);
 		userPanel.add(easyQuestion2);
 		userPanel.add(diffQuestion);
-		userPanel.add(degreeOfSeparation);
+		userPanel.add(result);
 	}
 
 	private void reloadData() {
@@ -263,10 +273,62 @@ public class SkytraxApplication extends JFrame {
 		numVerticesLabel.setText("#Vertices: " + String.valueOf(((CapGraph) graph).getNumVertices()));
 		numEdgesLabel.setText("#Edges: " + String.valueOf(((CapGraph) graph).getNumEdges()));
 		mainPanel.add((Component) graphPanel, BorderLayout.LINE_START);
-		degreeOfSeparation.setText("Degree of separation:");
+		result.setText("");
 		((Component) graphPanel).repaint();
 		((Component) graphPanel).revalidate();
 
+	}
+
+	private void printPath(List<Reviewer> path) {
+
+		System.out.println(path);
+		if (path != null) {
+			Reviewer curr = null;
+			Reviewer prev = null;
+			for (Reviewer r : path) {
+				curr = r;
+				// System.out.println("Current " + curr.toString());
+				if (prev != null) {
+					System.out.println("Previous " + prev.toString());
+
+					// System.out.println((guigraph.getEdge(String.valueOf(prev.getId())
+					// + "-" + String.valueOf(curr.getId()))).toString());
+
+					if (guigraph.getEdge(String.valueOf(curr.getId()) + "-" + String.valueOf(prev.getId())) == null) {
+						guigraph.getEdge(String.valueOf(prev.getId()) + "-" + String.valueOf(curr.getId()))
+								.addAttribute("ui.class", "path");
+						// System.out.println("Entrato 1 " + curr.toString());
+					} else {
+						guigraph.getEdge(String.valueOf(curr.getId()) + "-" + String.valueOf(prev.getId()))
+								.addAttribute("ui.class", "path");
+						// System.out.println("Entrato 2 " + curr.toString());
+					}
+				}
+				prev = curr;
+			}
+
+		}
+	}
+
+	private void printClique(List<Reviewer> vertices) {
+		
+		System.out.println(vertices);
+
+		if (vertices != null) {
+			for (Reviewer from : vertices) {
+				for (Reviewer to : vertices) {
+					if (!from.equals(to)) {		
+						if (guigraph.getEdge(String.valueOf(from.getId()) + "-" + String.valueOf(to.getId())) == null) {
+							guigraph.getEdge(String.valueOf(to.getId()) + "-" + String.valueOf(from.getId()))
+									.addAttribute("ui.class", "path");
+						} else {
+							guigraph.getEdge(String.valueOf(from.getId()) + "-" + String.valueOf(to.getId()))
+									.addAttribute("ui.class", "path");
+						}	
+					}	
+				}
+			}
+		}
 	}
 
 	public static void main(String[] args) {

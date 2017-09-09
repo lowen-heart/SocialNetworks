@@ -55,11 +55,11 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 	 * @throws IllegalAccessException
 	 * @throws NullPointerException
 	 */
-	public Reviewer (int id, String name, String surname, String country, List<ReviewAirline> economyReviews,
+	public Reviewer(int id, String name, String surname, String country, List<ReviewAirline> economyReviews,
 			ReviewAirline avgEconomyReview, List<ReviewAirline> premiumReviews, ReviewAirline avgPremiumReview,
 			List<ReviewAirline> businessReviews, ReviewAirline avgBusinessReview, List<ReviewAirline> firstReviews,
 			ReviewAirline avgFirstReview, List<ReviewAirline> emptyReviews, ReviewAirline avgEmptyReview)
-			throws IllegalAccessException, NullPointerException{
+			throws IllegalAccessException, NullPointerException {
 
 		super(id, name, surname, country);
 		if (economyReviews == null || avgEconomyReview == null || premiumReviews == null || avgPremiumReview == null
@@ -100,7 +100,7 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 	public ReviewAirline getAvgBusinessReview() {
 		return avgBusinessReview;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -119,7 +119,7 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 	 * @param ra
 	 */
 	public void addReview(ReviewAirline ra) {
-		if(ra == null){
+		if (ra == null) {
 			throw new NullPointerException("Argument passed is null");
 		}
 		switch (ra.getCabinClass()) {
@@ -151,7 +151,7 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 	 * @param avg
 	 */
 	private void calculateAvgReview(List<ReviewAirline> ra, ReviewAirline avg) {
-		if(ra == null  || avg == null){
+		if (ra == null || avg == null) {
 			throw new NullPointerException("One or more arguments passed is/are null");
 		}
 		ReviewAirline temp = new ReviewAirline(avg.getCabinClass());
@@ -235,7 +235,15 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 		return false;
 	}
 
-	// TODO
+	@Override
+	public String print() {
+		return super.print() + " ; Reviewer [economyReviews=" + economyReviews + ", avgEconomyReview="
+				+ avgEconomyReview + ", premiumReviews=" + premiumReviews + ", avgPremiumReview=" + avgPremiumReview
+				+ ", businessReviews=" + businessReviews + ", avgBusinessReview=" + avgBusinessReview
+				+ ", firstReviews=" + firstReviews + ", avgFirstReview=" + avgFirstReview + ", emptyReviews="
+				+ emptyReviews + ", avgEmptyReview=" + avgEmptyReview + "]";
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -264,11 +272,7 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 	 */
 	@Override
 	public String toString() {
-		return super.toString() + " ; Reviewer [economyReviews=" + economyReviews + ", avgEconomyReview="
-				+ avgEconomyReview + ", premiumReviews=" + premiumReviews + ", avgPremiumReview=" + avgPremiumReview
-				+ ", businessReviews=" + businessReviews + ", avgBusinessReview=" + avgBusinessReview
-				+ ", firstReviews=" + firstReviews + ", avgFirstReview=" + avgFirstReview + ", emptyReviews="
-				+ emptyReviews + ", avgEmptyReview=" + avgEmptyReview + "]";
+		return super.toString();
 	}
 
 	/*

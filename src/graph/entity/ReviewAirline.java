@@ -119,9 +119,6 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 	 * @param seatComfortRating
 	 */
 	public void setSeatComfortRating(float seatComfortRating) {
-		if(seatComfortRating < 0 || seatComfortRating > 5){
-			throw new IllegalArgumentException("Seat comfort rating is less than 0 or greater than 5");
-		}
 		this.seatComfortRating = seatComfortRating;
 	}
 
@@ -136,9 +133,6 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 	 * @param cabinStaffRating
 	 */
 	public void setCabinStaffRating(float cabinStaffRating) {
-		if(cabinStaffRating < 0 || cabinStaffRating > 5){
-			throw new IllegalArgumentException("Cabin staff rating is less than 0 or greater than 5");
-		}
 		this.cabinStaffRating = cabinStaffRating;
 	}
 
@@ -153,9 +147,6 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 	 * @param foodBeverageRating
 	 */
 	public void setFoodBeverageRating(float foodBeverageRating) {
-		if(foodBeverageRating < 0 || foodBeverageRating > 5){
-			throw new IllegalArgumentException("Food and beverage rating is less than 0 or greater than 5");
-		}
 		this.foodBeverageRating = foodBeverageRating;
 	}
 
@@ -170,9 +161,6 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 	 * @param inflightEntertainmentRating
 	 */
 	public void setInflightEntertainmentRating(float inflightEntertainmentRating) {
-		if(inflightEntertainmentRating < 0 || inflightEntertainmentRating > 5){
-			throw new IllegalArgumentException("In-flight entertainment rating is less than 0 or greater than 5");
-		}
 		this.inflightEntertainmentRating = inflightEntertainmentRating;
 	}
 
@@ -187,9 +175,6 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 	 * @param valueMoneyRating
 	 */
 	public void setValueMoneyRating(float valueMoneyRating) {
-		if(valueMoneyRating < 0 || valueMoneyRating > 5){
-			throw new IllegalArgumentException("Value money rating is less than 0 or greater than 5");
-		}
 		this.valueMoneyRating = valueMoneyRating;
 	}
 

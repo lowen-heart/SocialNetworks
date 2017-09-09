@@ -30,15 +30,22 @@ public class CapGraph implements Graph {
 	private int numVertices;
 	private int numEdges;
 	private Map<Vertex<Reviewer>, ArrayList<Edge<Reviewer>>> adjListMap;
-	// private Map<Reviewer, Vertex<Reviewer>> vertices;
 	private List<Graph> sccs;
 	private Vertex<Reviewer> best;
 	private Vertex<Reviewer> worst;
 
+	// TOMITA'S ALGORITHM VARIABLES
+	long nodes; // number of decisions
+	long timeLimit; // milliseconds
+	long cpuTime; // milliseconds
+	int maxSize; // size of max clique
+	//int style; // used to flavor algorithm
+	LinkedList<Reviewer> solution; // as it says
+	ArrayList<Vertex<Reviewer>>[] colorClass;
+
 	public CapGraph() throws IllegalAccessException {
 		super();
 		adjListMap = new HashMap<Vertex<Reviewer>, ArrayList<Edge<Reviewer>>>();
-		// vertices = new HashMap<Reviewer, Vertex<Reviewer>>();
 		sccs = new LinkedList<Graph>();
 		best = new Vertex<Reviewer>(
 				new Reviewer(Integer.MAX_VALUE, "Best", "Best", "Unknown", new ArrayList<ReviewAirline>(),
@@ -72,6 +79,12 @@ public class CapGraph implements Graph {
 						new ArrayList<ReviewAirline>(),
 						new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.EMPTY.toString(), 10.0f, "", 5.0f,
 								5.0f, 5.0f, 5.0f, 5.0f, false)));
+
+		// TOMITA'S VARIABLES
+		this.nodes = maxSize = 0;
+		this.cpuTime = timeLimit = -1;
+		//this.style = style;
+		this.solution = new LinkedList<Reviewer>();
 	}
 
 	/*
@@ -131,16 +144,32 @@ public class CapGraph implements Graph {
 		Edge<Reviewer> newEdgeToFrom = new Edge<Reviewer>(to, from);
 		ArrayList<Edge<Reviewer>> edgesFrom = getEdges(from);
 		ArrayList<Edge<Reviewer>> edgesTo = getEdges(to);
-		
-		if(!edgesFrom.contains(newEdgeFromTo) & !edgesTo.contains(newEdgeToFrom)){
+
+		if (!edgesFrom.contains(newEdgeFromTo) & !edgesTo.contains(newEdgeToFrom)) {
 			edgesFrom.add(newEdgeFromTo);
 			edgesTo.add(newEdgeToFrom);
+
+			for(Vertex<Reviewer> v : getVertices()){
+				if(v.equals(vertexFrom)){
+					vertexFrom = v;
+				}
+				if(v.equals(vertexTo)){
+					vertexTo = v;
+				}
+			}
+			
+			vertexFrom.setDegree(vertexFrom.getDegree() + 1);
+			vertexTo.setDegree(vertexTo.getDegree() + 1);
+			
+			vertexFrom.setNebDeg(vertexFrom.getNeighborDeg() + vertexTo.getDegree());
+			vertexTo.setNebDeg(vertexTo.getNeighborDeg() + vertexFrom.getDegree());
+
 			adjListMap.replace(vertexFrom, edgesFrom);
 			adjListMap.replace(vertexTo, edgesTo);
+
 			numEdges++;
 		}
-		
-		
+
 	}
 
 	/*
@@ -159,7 +188,6 @@ public class CapGraph implements Graph {
 		try {
 			egonet = new CapGraph();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		/*
@@ -248,7 +276,8 @@ public class CapGraph implements Graph {
 		Vertex<Reviewer> v = new Vertex<Reviewer>(reviewer);
 
 		for (Edge<Reviewer> edge : adjListMap.get(v)) {
-			//System.out.println("Neighbor " + v.getValue().getId() + " : " + edge.getTo());
+			// System.out.println("Neighbor " + v.getValue().getId() + " : " +
+			// edge.getTo());
 			neighbors.add(edge.getTo());
 		}
 
@@ -350,7 +379,6 @@ public class CapGraph implements Graph {
 		try {
 			g = new CapGraph();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		for (Vertex<Reviewer> from : vertices) {
@@ -399,13 +427,13 @@ public class CapGraph implements Graph {
 		List<Reviewer> pathFromStart = new LinkedList<Reviewer>();
 		List<Reviewer> pathFromEnd = new LinkedList<Reviewer>();
 
-		//pathFromStart.add(start);
-		//pathFromEnd.add(end);
-		
-		Reviewer collisionReviewer = biBfsSearchVisit(queueStart, visitedStart, parentStart, queueEnd, visitedEnd, parentEnd, pathFromStart,
-				pathFromEnd);
+		// pathFromStart.add(start);
+		// pathFromEnd.add(end);
+
+		Reviewer collisionReviewer = biBfsSearchVisit(queueStart, visitedStart, parentStart, queueEnd, visitedEnd,
+				parentEnd, pathFromStart, pathFromEnd);
 		if (collisionReviewer != null) {
-			return printPath(start,end,parentStart,parentEnd,collisionReviewer);
+			return printPath(start, end, parentStart, parentEnd, collisionReviewer);
 		} else {
 			System.out.println("No path found");
 			return null;
@@ -413,39 +441,40 @@ public class CapGraph implements Graph {
 
 	}
 
-	private List<Reviewer> printPath(Reviewer start, Reviewer end, HashMap<Reviewer, Reviewer> parentStart, HashMap<Reviewer, Reviewer> parentEnd, Reviewer collisionReviewer) {
+	private List<Reviewer> printPath(Reviewer start, Reviewer end, HashMap<Reviewer, Reviewer> parentStart,
+			HashMap<Reviewer, Reviewer> parentEnd, Reviewer collisionReviewer) {
 		System.out.println("Print Path");
 		LinkedList<Reviewer> path = new LinkedList<Reviewer>();
 
 		Reviewer curr = collisionReviewer;
-		//Reviewer prev = null;
+		// Reviewer prev = null;
 		// while we have not reached the start add the current node visited as
 		// first node inside the path
 		// doing so we are creating the path from the start to the end
 		while (!curr.equals(end)) {
-				path.addFirst(curr);
-				//prev = curr;
-				curr = parentEnd.get(curr);
-				//parentStart.remove(prev);
+			path.addFirst(curr);
+			// prev = curr;
+			curr = parentEnd.get(curr);
+			// parentStart.remove(prev);
 		}
-		
+
 		path.addFirst(end);
-		//path.addLast(collisionReviewer);
-		
+		// path.addLast(collisionReviewer);
+
 		curr = parentStart.get(collisionReviewer);
-		
-		while (!curr.equals(start)) {			
-				path.addLast(curr);
-				//prev = curr;
-				curr = parentStart.get(curr);
-				//parentEnd.remove(prev);
+
+		while (!curr.equals(start)) {
+			path.addLast(curr);
+			// prev = curr;
+			curr = parentStart.get(curr);
+			// parentEnd.remove(prev);
 		}
-		
+
 		// add start to the begin
 		path.addLast(start);
 
 		System.out.println("Done");
-		
+
 		return path;
 	}
 
@@ -456,18 +485,18 @@ public class CapGraph implements Graph {
 		while (!queueStart.isEmpty() && !queueEnd.isEmpty()) {
 			Reviewer currFromStart = queueStart.remove();
 			Reviewer currFromEnd = queueEnd.remove();
-			
-			for(Reviewer pfs : pathFromStart){
-				for(Reviewer pfe: pathFromEnd){
-					//System.out.println("From Start: " + pfs);
-					//System.out.println("From End: " + pfe);
-					if(pfs.equals(pfe)){
+
+			for (Reviewer pfs : pathFromStart) {
+				for (Reviewer pfe : pathFromEnd) {
+					// System.out.println("From Start: " + pfs);
+					// System.out.println("From End: " + pfe);
+					if (pfs.equals(pfe)) {
 						System.out.println("Matching Reviewer:" + pfs);
 						return pfs;
 					}
 				}
 			}
-			
+
 			pathFromStart.clear();
 			pathFromEnd.clear();
 
@@ -476,42 +505,38 @@ public class CapGraph implements Graph {
 
 			while (neighStartIter.hasPrevious()) {
 				Reviewer nextStart = neighStartIter.previous().getValue();
-				//System.out.println("CurrFromStart: " + currFromStart);
+				// System.out.println("CurrFromStart: " + currFromStart);
 				pathFromStart.add(nextStart);
-				//System.out.println("Next Start:" + nextStart);
+				// System.out.println("Next Start:" + nextStart);
 				if (!visitedStart.contains(nextStart)) {
 					visitedStart.add(nextStart);
-					parentStart.put(nextStart,currFromStart);
+					parentStart.put(nextStart, currFromStart);
 					System.out.println("Next: " + nextStart.getId() + " Curr: " + currFromStart.getId());
 					queueStart.add(nextStart);
-					
+
 				}
 			}
-			
-			
 
 			List<Vertex<Reviewer>> neighborsEnd = getNeighbors(currFromEnd);
 			ListIterator<Vertex<Reviewer>> neighEndIter = neighborsEnd.listIterator(neighborsEnd.size());
 
 			while (neighEndIter.hasPrevious()) {
 				Reviewer nextEnd = neighEndIter.previous().getValue();
-				//System.out.println("CurrFromStart: " + currFromStart);
+				// System.out.println("CurrFromStart: " + currFromStart);
 				pathFromEnd.add(nextEnd);
-				//System.out.println("Next End:" + nextEnd);
+				// System.out.println("Next End:" + nextEnd);
 				if (!visitedEnd.contains(nextEnd)) {
 					visitedEnd.add(nextEnd);
-					parentEnd.put(nextEnd,currFromEnd);
+					parentEnd.put(nextEnd, currFromEnd);
 					System.out.println("Next End: " + nextEnd.getId() + " Curr: " + currFromEnd.getId());
-					
+
 					queueEnd.add(nextEnd);
-					
-					
+
 				}
 			}
-			
 
 		}
-		
+
 		return null;
 	}
 
@@ -557,4 +582,152 @@ public class CapGraph implements Graph {
 	public void setWorst(Vertex<Reviewer> worst) {
 		this.worst = worst;
 	}
+
+	//TOMITAS'S ALGORITHM CLIQUES
+
+	public LinkedList<Reviewer> search() {
+
+		cpuTime = System.currentTimeMillis();
+		timeLimit = 1000*(long) 100000;
+		nodes = 0;
+		colorClass = new ArrayList[numVertices];
+
+		//growing clique
+		ArrayList<Vertex<Reviewer>> C = new ArrayList<Vertex<Reviewer>>();
+		//candidate set
+		ArrayList<Vertex<Reviewer>> P = new ArrayList<Vertex<Reviewer>>();
+		
+		//initialize colorClass array to contain an array list of vertices of that class for each vertex
+		//used to sort vertices by their colour
+		for (int i = 0; i < numVertices; i++) {
+			colorClass[i] = new ArrayList<Vertex<Reviewer>>();
+		}
+
+		//order the candidate set
+		orderVertices(P);
+		
+		expand(C, P);
+		
+		return solution;
+		
+	}
+
+	private void orderVertices(ArrayList<Vertex<Reviewer>> ColOrd) {
+
+		ArrayList<Vertex<Reviewer>> v = new ArrayList<Vertex<Reviewer>>();
+
+		// add all the vertices to v
+		v.addAll(getVertices());
+
+		//sort v using the comparator defined
+		v.sort(new TomitaComparator<Vertex<Reviewer>>());
+		// add ordered vertices to ColOrd that is P ordered by colors
+		ColOrd.addAll(v);
+
+	}
+
+	void expand(ArrayList<Vertex<Reviewer>> C, ArrayList<Vertex<Reviewer>> P) {
+		
+		if (timeLimit > 0 && (System.currentTimeMillis() - cpuTime) >= timeLimit) {
+			return;
+		}
+
+		nodes++;
+
+		int[] color = new int[P.size()];
+
+		numberSort(P, P, color);
+
+		for (int i = P.size() - 1; i >= 0; i--) {
+			
+			System.out.println("Expand: " + C + " , " + P);
+			
+			if (C.size() + color[i] <= maxSize) {
+				System.out.println("FAIL: " + C + " color " + color[i]);
+				return;
+			}
+			Vertex<Reviewer> v = P.get(i);
+			C.add(v);
+			ArrayList<Vertex<Reviewer>> newP = new ArrayList<Vertex<Reviewer>>(i);
+			for (int j = 0; j <= i; j++) {
+				Vertex<Reviewer> u = P.get(j);
+				if (adjListMap.get(u).contains(new Edge<Reviewer>(u.getValue(),v.getValue()))) {
+					newP.add(u);
+				}
+			}
+			
+			if (newP.isEmpty() && C.size() > maxSize){
+				System.out.println("Select: " + C + " , " + P);
+				saveSolution(C);
+				System.out.println("SAVE :" + C);
+			}
+			if (!newP.isEmpty()){
+				System.out.println("Select: " + C + " , " + newP);
+				expand(C, newP);
+			}
+			System.out.println("Reject " + i);
+			C.remove(C.size() - 1);
+			P.remove(i);
+		}
+	}
+
+	private void numberSort(ArrayList<Vertex<Reviewer>> ColOrd, ArrayList<Vertex<Reviewer>> P, int[] color) {
+		
+		int colors = 0;
+		
+		//reset the colorClass array of ArrayList
+		for (int i = 0; i < ColOrd.size(); i++){
+			colorClass[i].clear();
+		}
+			
+		for(Vertex<Reviewer> v : ColOrd){
+			int k = 0;
+			while (conflicts(v, colorClass[k])){
+				k++;
+			}
+			
+			//add vertex v to that color class
+			//System.out.println("Add " + v.getValue().getId() + " to colorClass " + k);
+			colorClass[k].add(v);
+			
+			colors = Math.max(colors, k + 1);
+		}
+		
+		
+		P.clear();
+		int i = 0;
+		for (int k = 0; k < colors; k++) {
+			for(Vertex<Reviewer> v :  colorClass[k]){
+				P.add(v);
+				color[i++] = k + 1;
+			}
+		}
+	}
+
+	//check if a given vertex is linked with a vertex of a given color class
+	private boolean conflicts(Vertex<Reviewer> v, ArrayList<Vertex<Reviewer>> colorClass) {
+		
+		for(Vertex<Reviewer> w : colorClass){		
+			if(adjListMap.get(v).contains(new Edge<Reviewer>(v.getValue(),w.getValue()))){
+				//System.out.println("Conflict: " + v.getValue().getId() + " - " + w.getValue().getId());
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void saveSolution(ArrayList<Vertex<Reviewer>> C) {
+
+		for(Vertex<Reviewer> v : C){
+			solution.add(v.getValue());
+		}
+
+		maxSize = C.size();
+		
+	}
+
+	public int getMaxSize() {
+		return maxSize;
+	}
+
 }

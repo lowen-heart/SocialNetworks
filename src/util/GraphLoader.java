@@ -7,36 +7,19 @@
 package util;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.Format;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 import java.util.Set;
 
 import org.graphstream.graph.Graph;
 
-import application.SkytraxApplication;
 import graph.CapGraph;
 import graph.Vertex;
-import graph.entity.Person;
 import graph.entity.ReviewAirline;
 import graph.entity.Reviewer;
-import javafx.util.converter.DateStringConverter;
-import javafx.util.converter.DateTimeStringConverter;
-import jdk.nashorn.internal.parser.DateParser;
-import scala.util.Random;
 
 public class GraphLoader {
 
@@ -74,6 +57,9 @@ public class GraphLoader {
 			while ((line = buffer.readLine()) != null) {
 				// System.out.println("Raw CSV data: " + line);
 				result = utilityCSVtoList(index, line, g, guigraph, cabinClass, seen);
+				if(!result){
+					System.out.println("ERROR LOADING");
+				}
 				// System.out.println("Converted data: " + result + "\n");
 				index++;
 			}
@@ -229,8 +215,6 @@ public class GraphLoader {
 	// Utility which converts CSV to ArrayList using Split Operation
 	private static boolean utilityCSVtoList(int index, String line, graph.Graph g, Graph guigraph, String cabinClass,
 			Set<Reviewer> seen) throws IllegalAccessException {
-		List<Person> result = new ArrayList<Person>();
-
 		if (line != null) {
 			String[] splitData = line.split(";(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 
