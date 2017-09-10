@@ -2,6 +2,11 @@ package graph;
 
 import java.util.Comparator;
 
+/**
+ * @author LP
+ *
+ * @param <E>
+ */
 public class TomitaComparator<E> implements Comparator<E> {
 
 	@Override

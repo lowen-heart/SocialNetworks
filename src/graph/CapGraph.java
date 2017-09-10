@@ -19,10 +19,9 @@ import graph.entity.ReviewAirline;
 import graph.entity.Reviewer;
 
 /**
- * @author Your name here.
+ * @author LP
  * 
- *         For the warm up assignment, you must implement your Graph in a class
- *         named CapGraph. Here is the stub file.
+ *        CapGraph for Capstone Project of UCSD Course
  *
  */
 public class CapGraph implements Graph {
@@ -39,8 +38,7 @@ public class CapGraph implements Graph {
 	long timeLimit; // milliseconds
 	long cpuTime; // milliseconds
 	int maxSize; // size of max clique
-	//int style; // used to flavor algorithm
-	LinkedList<Reviewer> solution; // as it says
+	LinkedList<Reviewer> solution;
 	ArrayList<Vertex<Reviewer>>[] colorClass;
 
 	public CapGraph() throws IllegalAccessException {
@@ -640,10 +638,10 @@ public class CapGraph implements Graph {
 
 		for (int i = P.size() - 1; i >= 0; i--) {
 			
-			System.out.println("Expand: " + C + " , " + P);
+			//System.out.println("Expand: " + C + " , " + P);
 			
 			if (C.size() + color[i] <= maxSize) {
-				System.out.println("FAIL: " + C + " color " + color[i]);
+				//System.out.println("FAIL: " + C + " color " + color[i]);
 				return;
 			}
 			Vertex<Reviewer> v = P.get(i);
@@ -657,15 +655,15 @@ public class CapGraph implements Graph {
 			}
 			
 			if (newP.isEmpty() && C.size() > maxSize){
-				System.out.println("Select: " + C + " , " + P);
+				//System.out.println("Select: " + C + " , " + P);
 				saveSolution(C);
-				System.out.println("SAVE :" + C);
+				//System.out.println("SAVE :" + C);
 			}
 			if (!newP.isEmpty()){
-				System.out.println("Select: " + C + " , " + newP);
+				//System.out.println("Select: " + C + " , " + newP);
 				expand(C, newP);
 			}
-			System.out.println("Reject " + i);
+			//System.out.println("Reject " + i);
 			C.remove(C.size() - 1);
 			P.remove(i);
 		}

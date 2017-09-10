@@ -5,8 +5,14 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +25,7 @@ import javax.swing.JPanel;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.view.View;
 import org.graphstream.ui.view.Viewer;
 
@@ -28,14 +35,14 @@ import graph.entity.ReviewAirline.Classes;
 import graph.entity.Reviewer;
 import util.GraphLoader;
 
-public class SkytraxApplication extends JFrame {
+public class SkytraxApplication extends JFrame implements KeyListener {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 9080966197484218070L;
 
-	HashMap<Classes, String> cabinClass = new HashMap<Classes, String>() {
+	private HashMap<Classes, String> cabinClass = new HashMap<Classes, String>() {
 		/**
 		 * 
 		 */
@@ -50,26 +57,32 @@ public class SkytraxApplication extends JFrame {
 		}
 	};
 
-	Graph guigraph;
-	graph.Graph graph;
-	Reviewer best;
-	Reviewer worst;
-	Viewer viewer;
-	View graphPanel;
-	JPanel userPanel;
-	JPanel mainPanel;
-	JLabel numVerticesLabel;
-	JLabel numEdgesLabel;
-	JLabel cabinClassesLabel;
-	JLabel fileLabel;
-	JLabel result;
-	JComboBox<String> comboClasses;
-	JComboBox<String> comboFiles;
-	JButton easyQuestion;
-	JButton easyQuestion2;
-	JButton diffQuestion;
+	private Graph guigraph;
+	private graph.Graph graph;
+	private Reviewer best;
+	private Reviewer worst;
+	private Viewer viewer;
+	private View graphView;
+	private JPanel userPanel;
+	private JPanel mainPanel;
+	private JLabel numVerticesLabel;
+	private JLabel numEdgesLabel;
+	private JLabel cabinClassesLabel;
+	private JLabel fileLabel;
+	private JLabel result;
+	private JComboBox<String> comboClasses;
+	private JComboBox<String> comboFiles;
+	private JButton easyQuestion;
+	private JButton easyQuestion2;
+	private JButton diffQuestion;
+
+	private boolean dragged;
+	private boolean keypressed;
 
 	public SkytraxApplication() {
+
+		dragged = false;
+		keypressed = false;
 
 		loadData(cabinClass.get(ReviewAirline.Classes.ECONOMY), "data/skytrax_airline_review_test_150.csv");
 		initUI();
@@ -81,7 +94,6 @@ public class SkytraxApplication extends JFrame {
 		try {
 			graph = new CapGraph();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		guigraph = new MultiGraph("Skytrax Airline Reviews");
@@ -104,7 +116,7 @@ public class SkytraxApplication extends JFrame {
 
 		mainPanel = new JPanel();
 		mainPanel.add(userPanel);
-		mainPanel.add((Component) graphPanel);
+		mainPanel.add((Component) graphView);
 
 		add(mainPanel);
 		setTitle("Skytrax Application");
@@ -117,27 +129,102 @@ public class SkytraxApplication extends JFrame {
 	private void initGraphPanel() {
 
 		guigraph.addAttribute("ui.stylesheet",
-				"node{ shape: circle; size: 18px, 18px;fill-mode: plain; fill-color: red; stroke-mode: plain; stroke-color: blue; } node#\""
-						+ String.valueOf(worst.getId()) + "\" {fill-color: yellow; } node#\""
-						+ String.valueOf(best.getId())
-						+ "\" {fill-color: green; }  edge{shape: line; fill-color: lightgray;} edge.path{fill-color: green; shape: blob;}");
+				"node{ shape: circle; size: 18px, 18px;fill-mode: plain; fill-color: red; stroke-mode: plain; stroke-color: blue;} "
+						+ "node#\"" + String.valueOf(worst.getId()) + "\" {fill-color: yellow; } "
+						+ "node#\"" + String.valueOf(best.getId()) + "\" {fill-color: green;}" 
+						+ "edge{shape: line; fill-color: lightgray;} "
+						+ "node.clique{shape: cross; size: 20px, 20px; fill-color: orange; z-index: 5;} "
+						+ "edge.clique{fill-color: orange; shape: angle; z-index: 4;} "
+						+ "edge.path{fill-color: green; shape: blob;}");
 		guigraph.addAttribute("ui.quality");
 		guigraph.addAttribute("ui.antialias");
 
 		viewer = new Viewer(guigraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
 		viewer.enableAutoLayout();
 
-		graphPanel = viewer.addDefaultView(false); // false indicates "no
-													// JFrame".
+		graphView = viewer.addDefaultView(false); // false indicates "no
+													// JFrame"
 
-		((Component) graphPanel).setPreferredSize(new Dimension(600, 600));
-		((Component) graphPanel).setBackground(Color.GREEN);
+		((Component) graphView).setMaximumSize(new Dimension(800, 800));
+		((Component) graphView).setPreferredSize(new Dimension(600, 600));
+		((Component) graphView).setMinimumSize(new Dimension(350, 350));
+		((Component) graphView).setBackground(Color.GREEN);
+
+		MouseAdapter mouseAdapter = new MouseAdapter() {
+			private Point mousePtStart;
+
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				System.out.println("Mouse wheel");
+
+				viewer.disableAutoLayout();
+
+				graphView.getCamera().setViewPercent(Math.max(graphView.getCamera().getViewPercent() + Math.signum(e.getUnitsToScroll()) * 0.05, 0.01));
+
+			}
+
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				System.out.println("Mouse dragged (" + e.getX() + "," + e.getY() + ")");
+				dragged = true;
+
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				System.out.println("Mouse pressed (" + e.getX() + "," + e.getY() + ")");
+				mousePtStart = e.getPoint();
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				System.out.println("Mouse released (" + e.getX() + "," + e.getY() + ")");
+
+				if (dragged && keypressed) {
+
+					viewer.disableAutoLayout();
+
+					int dx = e.getX() - mousePtStart.x;
+					int dy = e.getY() - mousePtStart.y;
+
+					if (dx > 0 && dy > 0) {
+
+						//System.out.println("Center View (" + graphView.getCamera().getViewCenter().x + "," + graphView.getCamera().getViewCenter().y + ")");
+
+						Point3 point = graphView.getCamera().transformPxToGu(mousePtStart.x + dx / 2, mousePtStart.y + dy / 2);
+
+						graphView.getCamera().setViewCenter(point.x, point.y, 0);
+
+						double ratio = (dx * dy) / (600.0 * 600.0);
+
+						//System.out.println("Ratio: " + ratio + " Area delta: " + (dx * dy));
+
+						graphView.getCamera().setViewPercent(ratio);
+
+						//System.out.println("New Center View (" + graphView.getCamera().getViewCenter().x + "," + graphView.getCamera().getViewCenter().y + ")");
+					} else {
+						graphView.getCamera().setViewPercent(1);
+					}
+
+					dragged = false;
+				}
+
+			}
+		};
+
+		((Component) graphView).addMouseWheelListener(mouseAdapter);
+		((Component) graphView).addMouseListener(mouseAdapter);
+		((Component) graphView).addMouseMotionListener(mouseAdapter);
+		graphView.addKeyListener(this);
+
 	}
 
 	private void initUserPanel() {
 
 		userPanel = new JPanel();
+		userPanel.setMaximumSize(new Dimension(400, 800));
 		userPanel.setPreferredSize(new Dimension(200, 600));
+		userPanel.setMinimumSize(new Dimension(50, 350));
 		userPanel.setBackground(Color.LIGHT_GRAY);
 
 		numVerticesLabel = new JLabel("#Vertices: " + String.valueOf(((CapGraph) graph).getNumVertices()));
@@ -179,10 +266,9 @@ public class SkytraxApplication extends JFrame {
 		easyQuestion = new JButton();
 		easyQuestion.setPreferredSize(new Dimension(150, 70));
 		easyQuestion.setText("<html>Easy 1: Distance between <br />best and worst</html>");
-		ActionListener eq1ActionListener = new ActionListener() {// add
-			// actionlistner
-			// to listen for
-			// change
+		// add actionlistner to listen for changes
+		ActionListener eq1ActionListener = new ActionListener() {
+			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
@@ -193,8 +279,8 @@ public class SkytraxApplication extends JFrame {
 
 				result.setText("Degree of separation: " + (path.size() - 1));
 
-				((Component) graphPanel).repaint();
-				((Component) graphPanel).revalidate();
+				((Component) graphView).repaint();
+				((Component) graphView).revalidate();
 			}
 
 		};
@@ -204,10 +290,9 @@ public class SkytraxApplication extends JFrame {
 		easyQuestion2 = new JButton();
 		easyQuestion2.setPreferredSize(new Dimension(150, 70));
 		easyQuestion2.setText("<html>Easy 2: Fundamental Reviewers</html>");
-		ActionListener eq2ActionListener = new ActionListener() {// add
-			// actionlistner
-			// to listen for
-			// change
+		// add actionlistner to listen for changes
+		ActionListener eq2ActionListener = new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Button Pressed");
@@ -219,10 +304,9 @@ public class SkytraxApplication extends JFrame {
 		diffQuestion = new JButton();
 		diffQuestion.setPreferredSize(new Dimension(150, 70));
 		diffQuestion.setText("<html>Difficult : Tomita's Algorithm</html>");
-		ActionListener dqActionListener = new ActionListener() {// add
-			// actionlistner
-			// to listen for
-			// change
+		// add actionlistner to listen for changes
+		ActionListener dqActionListener = new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Button Difficult Pressed");
@@ -237,15 +321,14 @@ public class SkytraxApplication extends JFrame {
 
 				printClique(vertices);
 
-				if(cpuTime < 1000){
+				if (cpuTime < 1000) {
 					result.setText("CPUTime: " + cpuTime + " ms; Max Clique: " + ((CapGraph) graph).getMaxSize());
-				}else{
-					result.setText("CPUTime: " + cpuTime/1000 + " s; Max Clique: " + ((CapGraph) graph).getMaxSize());
+				} else {
+					result.setText("CPUTime: " + cpuTime / 1000 + " s; Max Clique: " + ((CapGraph) graph).getMaxSize());
 				}
-				
 
-				((Component) graphPanel).repaint();
-				((Component) graphPanel).revalidate();
+				((Component) graphView).repaint();
+				((Component) graphView).revalidate();
 			}
 		};
 
@@ -268,14 +351,14 @@ public class SkytraxApplication extends JFrame {
 	private void reloadData() {
 
 		loadData(comboClasses.getSelectedItem().toString(), comboFiles.getSelectedItem().toString());
-		mainPanel.remove((Component) graphPanel);
+		mainPanel.remove((Component) graphView);
 		initGraphPanel();
 		numVerticesLabel.setText("#Vertices: " + String.valueOf(((CapGraph) graph).getNumVertices()));
 		numEdgesLabel.setText("#Edges: " + String.valueOf(((CapGraph) graph).getNumEdges()));
-		mainPanel.add((Component) graphPanel, BorderLayout.LINE_START);
+		mainPanel.add((Component) graphView, BorderLayout.LINE_START);
 		result.setText("");
-		((Component) graphPanel).repaint();
-		((Component) graphPanel).revalidate();
+		((Component) graphView).repaint();
+		((Component) graphView).revalidate();
 
 	}
 
@@ -311,21 +394,24 @@ public class SkytraxApplication extends JFrame {
 	}
 
 	private void printClique(List<Reviewer> vertices) {
-		
+
 		System.out.println(vertices);
+
+		guigraph.addAttribute("ui.stylesheet", "node{ fill-color: lightgrey; size: 10px, 10px;}");
 
 		if (vertices != null) {
 			for (Reviewer from : vertices) {
+				guigraph.getNode(String.valueOf(from.getId())).setAttribute("ui.class", "clique");
 				for (Reviewer to : vertices) {
-					if (!from.equals(to)) {		
+					if (!from.equals(to)) {
 						if (guigraph.getEdge(String.valueOf(from.getId()) + "-" + String.valueOf(to.getId())) == null) {
 							guigraph.getEdge(String.valueOf(to.getId()) + "-" + String.valueOf(from.getId()))
-									.addAttribute("ui.class", "path");
+									.addAttribute("ui.class", "clique");
 						} else {
 							guigraph.getEdge(String.valueOf(from.getId()) + "-" + String.valueOf(to.getId()))
-									.addAttribute("ui.class", "path");
-						}	
-					}	
+									.addAttribute("ui.class", "clique");
+						}
+					}
 				}
 			}
 		}
@@ -339,6 +425,29 @@ public class SkytraxApplication extends JFrame {
 			sa.setVisible(true);
 		});
 
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		System.out.println("Key Typed: " + e.getKeyChar());
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		System.out.println("Key Pressed: " + e.getKeyChar());
+		if (e.getKeyChar() == 'z' || e.getKeyChar() == 'Z') {
+			System.out.println("Z pressed");
+			keypressed = true;
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		System.out.println("Key Released: " + e.getKeyChar());
+		if (e.getKeyChar() == 'z' || e.getKeyChar() == 'Z') {
+			System.out.println("Z pressed");
+			keypressed = false;
+		}
 	}
 
 }

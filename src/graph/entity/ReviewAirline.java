@@ -3,7 +3,7 @@ package graph.entity;
 import java.time.LocalDate;
 
 /**
- * @author loris
+ * @author LP
  *
  */
 public class ReviewAirline extends Review implements Comparable<ReviewAirline> {

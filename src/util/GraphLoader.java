@@ -42,6 +42,12 @@ public class GraphLoader {
 		 */
 	}
 
+	/**
+	 * @param g
+	 * @param guigraph
+	 * @param cabinClass
+	 * @param fileName
+	 */
 	public static void loadAirportsReviewsFromCSV(graph.Graph g, Graph guigraph, String cabinClass, String fileName) {
 		boolean result;
 		BufferedReader buffer = null;
@@ -77,6 +83,11 @@ public class GraphLoader {
 
 	}
 
+	/**
+	 * @param g
+	 * @param guigraph
+	 * @param cabinClass
+	 */
 	public static void calculateEdges(graph.Graph g, Graph guigraph, String cabinClass) {
 
 		boolean closeness = false;
@@ -213,6 +224,16 @@ public class GraphLoader {
 	}
 
 	// Utility which converts CSV to ArrayList using Split Operation
+	/**
+	 * @param index
+	 * @param line
+	 * @param g
+	 * @param guigraph
+	 * @param cabinClass
+	 * @param seen
+	 * @return
+	 * @throws IllegalAccessException
+	 */
 	private static boolean utilityCSVtoList(int index, String line, graph.Graph g, Graph guigraph, String cabinClass,
 			Set<Reviewer> seen) throws IllegalAccessException {
 		if (line != null) {
@@ -230,13 +251,9 @@ public class GraphLoader {
 					reviewer = new Reviewer(index, "", nameSurname[0].trim(), splitData[2].trim());
 				}
 
-				// System.out.println("Name Surname: " + reviewer.getName() + "
-				// " +
-				// reviewer.getSurname());
+				// System.out.println("Name Surname: " + reviewer.getName() + " " + reviewer.getSurname());
 
-				// Reviewer reviewer = new Reviewer(index,
-				// nameSurname[0].trim(),
-				// nameSurname[1].trim(), splitData[2].trim());
+				// Reviewer reviewer = new Reviewer(index,nameSurname[0].trim(),nameSurname[1].trim(), splitData[2].trim());
 
 				DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 				LocalDate date = null;
@@ -269,10 +286,11 @@ public class GraphLoader {
 					reviewer.addReview(airlineReview);
 				}
 
-				// System.out.println("Converted data: " + reviewer.toString() +
-				// "\n");
+				// System.out.println("Converted data: " + reviewer.toString() + "\n");
 				return true;
 			}
+			
+			return true;
 		}
 
 		return false;
