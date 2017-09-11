@@ -25,8 +25,20 @@ public class EdgeTest {
 
 	@Test
 	public void testEqualsObject() {
+		
+		assertFalse("Null object",edgeTest1.equals(null));
+		
+		assertTrue("Same object: true",edgeTest1.equals(edgeTest1));
+		
+		assertFalse("Different objects",edgeTest1.equals(edgeTest2));
+		
+		assertEquals(edgeTest1.equals(edgeTest2),false);
+		
 		edgeTest2.setTo("Bob");
-		assertEquals(edgeTest1,edgeTest2);
+		
+		assertEquals(edgeTest1.equals(edgeTest2),true);
+		
+		assertFalse("They are not the same object so equals returns false",edgeTest1.equals(new Object()));
 	}
 
 }

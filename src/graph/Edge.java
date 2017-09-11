@@ -52,7 +52,7 @@ public class Edge <E extends Comparable<E>>{
 	
 	@Override
 	public boolean equals(Object obj){
-		if (!(obj instanceof Edge))
+		if (obj == null || !(obj instanceof Edge))
 	        return false;
 	    if (obj == this)
 	        return true;

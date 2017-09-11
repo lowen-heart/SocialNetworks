@@ -8,13 +8,15 @@ public class Vertex <E extends Comparable<E>> {
 	int neighborDeg; //sum of degree of neighbors vertices
 
 	public Vertex(E value) {
-		super();
-		this.value = value;
-		this.degree = 0;
-		this.neighborDeg = 0;
+		this(value,0);
 	}
 	
-	public Vertex (int index, int degree){
+	public Vertex (E value, int degree){
+		super();
+		if(degree < 0){
+			throw new IllegalArgumentException("Argument degree must be greater than zero");
+		}
+		this.value = value;
 		this.degree = degree;
 		neighborDeg = 0;
 	}
@@ -52,13 +54,12 @@ public class Vertex <E extends Comparable<E>> {
 
 	@Override
 	public boolean equals(Object obj){
-		if (!(obj instanceof Vertex))
+		if (obj == null || !(obj instanceof Vertex))
 	        return false;
 	    if (obj == this)
 	        return true;
 
 	    Vertex<?> vertex = (Vertex<?>) obj; 
-	    //System.out.println("Equals Vertex: " + this.value.toString() + "," + vertex.value.toString());
 	    return (this.value != null && this.value.equals(vertex.value));
 	}
 	

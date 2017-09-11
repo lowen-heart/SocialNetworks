@@ -143,6 +143,8 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 			emptyReviews.add(ra);
 			calculateAvgReview(emptyReviews, avgEmptyReview);
 			break;
+		default:
+			throw new IllegalArgumentException();
 		}
 	}
 

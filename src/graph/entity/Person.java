@@ -81,7 +81,6 @@ public class Person{
 		Person person = (Person) obj;
 		
 		if(this.name.equals(person.getName()) && this.surname.equals(person.getSurname()) && this.country.equals(person.getCountry())){
-			//System.out.println("Equals Person");
 			return true;
 		}
 	
@@ -93,9 +92,10 @@ public class Person{
 	 */
 	@Override
     public int hashCode() {
+		final int prime = 31;
         int result = name.hashCode();
         result += surname.hashCode();
-        result = 31 * result + country.hashCode();
+        result = prime * result + country.hashCode();
         return result;
     }
 	
