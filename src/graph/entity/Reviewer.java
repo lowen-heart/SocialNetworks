@@ -144,7 +144,7 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 			calculateAvgReview(emptyReviews, avgEmptyReview);
 			break;
 		default:
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Cabin class is not one of the pre-defined ones");
 		}
 	}
 

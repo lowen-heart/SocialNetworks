@@ -99,29 +99,29 @@ public class PersonTest {
 	public void testEqualsObject() {
 		System.out.println("-------- START TEST EQUALS --------");
 
-		assertEquals(p1.equals(null), false);
+		assertEquals(false,p1.equals(null));
 		System.out.println("Equals: " + p1.equals(null) + " p1: " + p1 + " null");
 		
-		assertEquals(p0.equals(p0), true);
+		assertEquals(true,p0.equals(p0));
 		System.out.println("Equals: " + p0.equals(p0) + " p0: " + p0 + " p0: " + p0);
 
-		assertEquals(p1.equals(p0), false);
+		assertEquals(false,p1.equals(p0));
 		System.out.println("Equals: " + p1.equals(p0) + " p1: " + p1 + " p0: " + p0);
 
 		Person p3;
 		try {
 			System.out.println("Create new person as P0");
 			p3 = new Person(p0.getId(),p0.getName(),p0.getSurname(),p0.getCountry());
-			assertEquals(p0.equals(p3), true);
+			assertEquals(true,p0.equals(p3));
 			System.out.println("Equals: " + p0.equals(p3) + " p0: " + p0 + " p3: " + p3);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
 
-		assertEquals(p0.equals(p2), false);
+		assertEquals(false,p0.equals(p2));
 		System.out.println("Equals: " + p0.equals(p2) + " p0: " + p0 + " p2: " + p2);
 		
-		assertEquals(p0.equals(new Object()), false);
+		assertEquals(false,p0.equals(new Object()));
 		System.out.println("Not same object: " + p0.equals(new Object()));
 
 		System.out.println("-------- END TEST EQUALS --------");
