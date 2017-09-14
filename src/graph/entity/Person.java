@@ -12,15 +12,15 @@ public class Person{
 	 * @param name
 	 * @param surname
 	 * @param country
-	 * @throws IllegalAccessException 
+	 * @throws IllegalArgumentException 
 	 */
-	public Person(int id, String name, String surname, String country) throws IllegalAccessException {
+	public Person(int id, String name, String surname, String country) throws IllegalArgumentException {
 		super();
 		if(id < 0){
-			throw new IllegalAccessException("Id is less than 0");
+			throw new IllegalArgumentException("Id is less than 0");
 		}
 		if(name == null || surname == null || country == null){
-			throw new IllegalAccessException("Name, surname or country is null");
+			throw new IllegalArgumentException("Name, surname or country is null");
 		}
 		this.id = id;
 		this.name = name;

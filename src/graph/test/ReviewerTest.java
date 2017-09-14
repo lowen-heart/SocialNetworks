@@ -50,46 +50,45 @@ public class ReviewerTest {
 		eco1 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 0.0f, "", 2.0f, 2.0f,
 				3.0f, 4.0f, 5.0f, false);
 		eco2 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 0.0f, "", 0.0f, 1.0f,
-				3.0f, 3.0f, 4.0f, false);
-		eco3 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 0.0f, "", 0.0f, 1.0f,
-				1.0f, 3.0f, 4.0f, false);
-		
+				3.0f, 3.0f, 5.0f, false);
+		eco3 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 0.0f, "", 0.0f, 5.0f,
+				1.0f, 1.0f, 2.0f, false);
+
 		fc0 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 0.0f, "", 0.0f, 0.0f,
 				0.0f, 0.0f, 0.0f, false);
 		fc1 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 0.0f, "", 2.0f, 2.0f,
 				3.0f, 4.0f, 5.0f, false);
 		fc2 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 0.0f, "", 0.0f, 1.0f,
-				3.0f, 3.0f, 4.0f, false);
-		fc3 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 0.0f, "", 0.0f, 1.0f,
-				1.0f, 3.0f, 4.0f, false);
-		
+				3.0f, 3.0f, 5.0f, false);
+		fc3 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 0.0f, "", 0.0f, 5.0f,
+				1.0f, 1.0f, 2.0f, false);
+
 		bc0 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 0.0f, "", 0.0f, 0.0f,
 				0.0f, 0.0f, 0.0f, false);
 		bc1 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 0.0f, "", 2.0f, 2.0f,
 				3.0f, 4.0f, 5.0f, false);
 		bc2 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 0.0f, "", 0.0f, 1.0f,
-				3.0f, 3.0f, 4.0f, false);
-		bc3 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 0.0f, "", 0.0f, 1.0f,
-				1.0f, 3.0f, 4.0f, false);
-		
+				3.0f, 3.0f, 5.0f, false);
+		bc3 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 0.0f, "", 0.0f, 5.0f,
+				1.0f, 1.0f, 2.0f, false);
+
 		pec0 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 0.0f, "", 0.0f,
 				0.0f, 0.0f, 0.0f, 0.0f, false);
-		pec1 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 0.0f, "", 2.0f, 2.0f,
-				3.0f, 4.0f, 5.0f, false);
-		pec2 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 0.0f, "", 0.0f, 1.0f,
-				3.0f, 3.0f, 4.0f, false);
-		pec3 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 0.0f, "", 0.0f, 1.0f,
-				1.0f, 3.0f, 4.0f, false);
-		
+		pec1 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 0.0f, "", 2.0f,
+				2.0f, 3.0f, 4.0f, 5.0f, false);
+		pec2 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 0.0f, "", 0.0f,
+				1.0f, 3.0f, 3.0f, 5.0f, false);
+		pec3 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 0.0f, "", 0.0f,
+				5.0f, 1.0f, 1.0f, 2.0f, false);
+
 		empty0 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.EMPTY.toString(), 0.0f, "", 0.0f, 0.0f,
 				0.0f, 0.0f, 0.0f, false);
 		empty1 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.EMPTY.toString(), 0.0f, "", 2.0f, 2.0f,
 				3.0f, 4.0f, 5.0f, false);
 		empty2 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.EMPTY.toString(), 0.0f, "", 0.0f, 1.0f,
-				3.0f, 3.0f, 4.0f, false);
-		empty3 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.EMPTY.toString(), 0.0f, "", 0.0f, 1.0f,
-				1.0f, 3.0f, 4.0f, false);
-		
+				3.0f, 3.0f, 5.0f, false);
+		empty3 = new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.EMPTY.toString(), 0.0f, "", 0.0f, 5.0f,
+				1.0f, 1.0f, 2.0f, false);
 
 		r3 = new Reviewer(3, "Test", "Person", "Unknown", new ArrayList<ReviewAirline>(),
 				new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 10.0f, "", 5.0f, 5.0f,
@@ -330,13 +329,17 @@ public class ReviewerTest {
 		r1.addReview(pec2);
 		r1.addReview(empty2);
 
-		closenessHelper(r0, r1,true);
-		
+		System.out.println("----------------------------------------------------------");
+
+		closenessHelper(r0, r1, true);
+
 		r0.addReview(eco3);
 		r0.addReview(fc3);
 		r0.addReview(bc3);
 		r0.addReview(pec3);
 		r0.addReview(empty3);
+
+		System.out.println("----------------------------------------------------------");
 
 		closenessHelper(r0, r1, false);
 
@@ -346,37 +349,352 @@ public class ReviewerTest {
 	private void closenessHelper(Reviewer r0, Reviewer r1, boolean expected) {
 
 		System.out.println("Reviewers closeness on " + ReviewAirline.Classes.ECONOMY.toString() + " cabin class "
-				+ r0.reviewersCloseness(r1, ReviewAirline.Classes.ECONOMY.toString()));
+				+ r0.reviewersCloseness(r1, ReviewAirline.Classes.ECONOMY.toString()) + " avg r0:r1 "
+				+ r0.getAvgEconomyReview().getCabinStaffRating() + ":" + r1.getAvgEconomyReview().getCabinStaffRating()
+				+ "," + +r0.getAvgEconomyReview().getFoodBeverageRating() + ":"
+				+ r1.getAvgEconomyReview().getFoodBeverageRating() + ","
+				+ +r0.getAvgEconomyReview().getInflightEntertainmentRating() + ":"
+				+ r1.getAvgEconomyReview().getInflightEntertainmentRating() + ","
+				+ r0.getAvgEconomyReview().getSeatComfortRating() + ":"
+				+ r0.getAvgEconomyReview().getSeatComfortRating() + ","
+				+ +r0.getAvgEconomyReview().getValueMoneyRating() + ":"
+				+ r1.getAvgEconomyReview().getValueMoneyRating());
 		assertEquals(expected, r0.reviewersCloseness(r1, ReviewAirline.Classes.ECONOMY.toString()));
 
 		System.out.println("Reviewers closeness on " + ReviewAirline.Classes.PREMIUMECONOMY.toString() + " cabin class "
-				+ r0.reviewersCloseness(r1, ReviewAirline.Classes.PREMIUMECONOMY.toString()));
+				+ r0.reviewersCloseness(r1, ReviewAirline.Classes.PREMIUMECONOMY.toString()) + " avg r0:r1 "
+				+ r0.getAvgPremiumReview().getCabinStaffRating() + ":" + r1.getAvgPremiumReview().getCabinStaffRating()
+				+ "," + +r0.getAvgPremiumReview().getFoodBeverageRating() + ":"
+				+ r1.getAvgPremiumReview().getFoodBeverageRating() + ","
+				+ +r0.getAvgPremiumReview().getInflightEntertainmentRating() + ":"
+				+ r1.getAvgPremiumReview().getInflightEntertainmentRating() + ","
+				+ r0.getAvgPremiumReview().getSeatComfortRating() + ":"
+				+ r0.getAvgPremiumReview().getSeatComfortRating() + ","
+				+ +r0.getAvgPremiumReview().getValueMoneyRating() + ":"
+				+ r1.getAvgPremiumReview().getValueMoneyRating());
 		assertEquals(expected, r0.reviewersCloseness(r1, ReviewAirline.Classes.PREMIUMECONOMY.toString()));
 
 		System.out.println("Reviewers closeness on " + ReviewAirline.Classes.BUSINESS.toString() + " cabin class "
-				+ r0.reviewersCloseness(r1, ReviewAirline.Classes.BUSINESS.toString()));
+				+ r0.reviewersCloseness(r1, ReviewAirline.Classes.BUSINESS.toString()) + " avg r0:r1 "
+				+ r0.getAvgBusinessReview().getCabinStaffRating() + ":"
+				+ r1.getAvgBusinessReview().getCabinStaffRating() + ","
+				+ +r0.getAvgBusinessReview().getFoodBeverageRating() + ":"
+				+ r1.getAvgBusinessReview().getFoodBeverageRating() + ","
+				+ +r0.getAvgBusinessReview().getInflightEntertainmentRating() + ":"
+				+ r1.getAvgBusinessReview().getInflightEntertainmentRating() + ","
+				+ r0.getAvgBusinessReview().getSeatComfortRating() + ":"
+				+ r0.getAvgBusinessReview().getSeatComfortRating() + ","
+				+ +r0.getAvgBusinessReview().getValueMoneyRating() + ":"
+				+ r1.getAvgBusinessReview().getValueMoneyRating());
 		assertEquals(expected, r0.reviewersCloseness(r1, ReviewAirline.Classes.BUSINESS.toString()));
 
 		System.out.println("Reviewers closeness on " + ReviewAirline.Classes.FIRSTCLASS.toString() + " cabin class "
-				+ r0.reviewersCloseness(r1, ReviewAirline.Classes.FIRSTCLASS.toString()));
+				+ r0.reviewersCloseness(r1, ReviewAirline.Classes.FIRSTCLASS.toString()) + " avg r0:r1 "
+				+ r0.getAvgFirstReview().getCabinStaffRating() + ":" + r1.getAvgFirstReview().getCabinStaffRating()
+				+ "," + +r0.getAvgFirstReview().getFoodBeverageRating() + ":"
+				+ r1.getAvgFirstReview().getFoodBeverageRating() + ","
+				+ +r0.getAvgFirstReview().getInflightEntertainmentRating() + ":"
+				+ r1.getAvgFirstReview().getInflightEntertainmentRating() + ","
+				+ r0.getAvgFirstReview().getSeatComfortRating() + ":" + r0.getAvgFirstReview().getSeatComfortRating()
+				+ "," + +r0.getAvgFirstReview().getValueMoneyRating() + ":"
+				+ r1.getAvgFirstReview().getValueMoneyRating());
 		assertEquals(expected, r0.reviewersCloseness(r1, ReviewAirline.Classes.FIRSTCLASS.toString()));
 
 		System.out.println("Reviewers closeness on " + ReviewAirline.Classes.EMPTY.toString() + " cabin class "
-				+ r0.reviewersCloseness(r1, ReviewAirline.Classes.EMPTY.toString()));
+				+ r0.reviewersCloseness(r1, ReviewAirline.Classes.EMPTY.toString()) + " avg r0:r1 "
+				+ r0.getAvgEmptyReview().getCabinStaffRating() + ":" + r1.getAvgEmptyReview().getCabinStaffRating()
+				+ "," + +r0.getAvgEmptyReview().getFoodBeverageRating() + ":"
+				+ r1.getAvgEmptyReview().getFoodBeverageRating() + ","
+				+ +r0.getAvgEmptyReview().getInflightEntertainmentRating() + ":"
+				+ r1.getAvgEmptyReview().getInflightEntertainmentRating() + ","
+				+ r0.getAvgEmptyReview().getSeatComfortRating() + ":" + r0.getAvgEmptyReview().getSeatComfortRating()
+				+ "," + +r0.getAvgEmptyReview().getValueMoneyRating() + ":"
+				+ r1.getAvgEmptyReview().getValueMoneyRating());
 		assertEquals(expected, r0.reviewersCloseness(r1, ReviewAirline.Classes.EMPTY.toString()));
 
 	}
 
 	@Test
-	public void testCalculateAvgReview() {
-		System.out.println("-------- START TEST CALCULATE AVG REVIEW --------");
-
-		System.out.println("-------- END TEST CALCULATE AVG REVIEW --------");
-	}
-
-	@Test
 	public void testConstructors() {
 		System.out.println("-------- START TEST CONSTRUCTORS --------");
+
+		try {
+			Reviewer r4 = new Reviewer(-5, "Test", "Test", "Test", new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 10.0f, "",
+							5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(), new ReviewAirline(LocalDate.now(), "",
+							ReviewAirline.Classes.EMPTY.toString(), 10.0f, "", 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+		
+		try {
+			Reviewer r4 = new Reviewer(3, null, "Test", "Test", new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 10.0f, "",
+							5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(), new ReviewAirline(LocalDate.now(), "",
+							ReviewAirline.Classes.EMPTY.toString(), 10.0f, "", 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+		
+		try {
+			Reviewer r4 = new Reviewer(3, "Test", null, "Test", new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 10.0f, "",
+							5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(), new ReviewAirline(LocalDate.now(), "",
+							ReviewAirline.Classes.EMPTY.toString(), 10.0f, "", 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+		
+		try {
+			Reviewer r4 = new Reviewer(3, "Test", "Person", null, new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 10.0f, "",
+							5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(), new ReviewAirline(LocalDate.now(), "",
+							ReviewAirline.Classes.EMPTY.toString(), 10.0f, "", 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+		
+		try {
+			Reviewer r4 = new Reviewer(3, "Test", "Person", "Unknown", null,
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 10.0f, "",
+							5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(), new ReviewAirline(LocalDate.now(), "",
+							ReviewAirline.Classes.EMPTY.toString(), 10.0f, "", 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+
+		try {
+			Reviewer r4 = new Reviewer(3, "Test", "Person", "Unknown", new ArrayList<ReviewAirline>(), null,
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 10.0f, "",
+							5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(), new ReviewAirline(LocalDate.now(), "",
+							ReviewAirline.Classes.EMPTY.toString(), 10.0f, "", 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+
+		try {
+			Reviewer r4 = new Reviewer(3, "Test", "Person", "Unknown", new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					null,
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 10.0f, "",
+							5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(), new ReviewAirline(LocalDate.now(), "",
+							ReviewAirline.Classes.EMPTY.toString(), 10.0f, "", 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+
+		try {
+			Reviewer r4 = new Reviewer(3, "Test", "Person", "Unknown", new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(), null, new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(), new ReviewAirline(LocalDate.now(), "",
+							ReviewAirline.Classes.EMPTY.toString(), 10.0f, "", 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+
+		try {
+			Reviewer r4 = new Reviewer(3, "Test", "Person", "Unknown", new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 10.0f, "",
+							5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false),
+					null,
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(), new ReviewAirline(LocalDate.now(), "",
+							ReviewAirline.Classes.EMPTY.toString(), 10.0f, "", 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+			;
+		}
+
+		try {
+			Reviewer r4 = new Reviewer(3, "Test", "Person", "Unknown", new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 10.0f, "",
+							5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(), null, new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(), new ReviewAirline(LocalDate.now(), "",
+							ReviewAirline.Classes.EMPTY.toString(), 10.0f, "", 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+
+		try {
+			Reviewer r4 = new Reviewer(3, "Test", "Person", "Unknown", new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 10.0f, "",
+							5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					null,
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(), new ReviewAirline(LocalDate.now(), "",
+							ReviewAirline.Classes.EMPTY.toString(), 10.0f, "", 5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+
+		try {
+			Reviewer r4 = new Reviewer(3, "Test", "Person", "Unknown", new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 10.0f, "",
+							5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(), null, new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.EMPTY.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+
+		try {
+			Reviewer r4 = new Reviewer(3, "Test", "Person", "Unknown", new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 10.0f, "",
+							5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					null, new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.EMPTY.toString(), 10.0f, "",
+							5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+
+		try {
+			Reviewer r4 = new Reviewer(3, "Test", "Person", "Unknown", new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.PREMIUMECONOMY.toString(), 10.0f, "",
+							5.0f, 5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.BUSINESS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(),
+					new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.FIRSTCLASS.toString(), 10.0f, "", 5.0f,
+							5.0f, 5.0f, 5.0f, 5.0f, false),
+					new ArrayList<ReviewAirline>(), null);
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+
+		try {
+			Reviewer r4 = new Reviewer(3, "Test", "Person", "Unknown", new ArrayList<ReviewAirline>(), null, null, null,
+					null, null, null, null, null, null);
+		} catch (IllegalArgumentException | NullPointerException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
 
 		System.out.println("-------- END TEST CONSTRUCTORS--------");
 	}

@@ -25,55 +25,55 @@ public class PersonTest {
 	public void testConstructors(){
 		try {
 			Person p3 = new Person(-1,"Test","Test","Test");
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException e) {
 			System.out.println("Illegal ID negative value");
 		}
 		
 		try {
 			Person p3 = new Person(1,"","Test","Test");
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
 		
 		try {
 			Person p3 = new Person(1,"Test","","Test");
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
 		
 		try {
 			Person p3 = new Person(1,"Test","Test","");
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
 		
 		try {
 			Person p3 = new Person(1,"","Test","Test");
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException e) {
 			System.out.println("Illegal ID value");
 		}
 		
 		try {
 			Person p3 = new Person(1,"","Test","Test");
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException e) {
 			System.out.println("Illegal ID value");
 		}
 		
 		try {
 			Person p3 = new Person(1,null,"Test","Test");
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException e) {
 			System.out.println("Illegal Name null value");
 		}
 		
 		try {
 			Person p3 = new Person(1,"Test",null,"Test");
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException e) {
 			System.out.println("Illegal Surname null value");
 		}
 		
 		try {
 			Person p3 = new Person(1,"Test","Test",null);
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException e) {
 			System.out.println("Illegal Country null value");
 		}
 	}
@@ -114,7 +114,7 @@ public class PersonTest {
 			p3 = new Person(p0.getId(),p0.getName(),p0.getSurname(),p0.getCountry());
 			assertEquals(true,p0.equals(p3));
 			System.out.println("Equals: " + p0.equals(p3) + " p0: " + p0 + " p3: " + p3);
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
 

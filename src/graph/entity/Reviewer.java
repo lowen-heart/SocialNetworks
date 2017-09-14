@@ -59,7 +59,7 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 			ReviewAirline avgEconomyReview, List<ReviewAirline> premiumReviews, ReviewAirline avgPremiumReview,
 			List<ReviewAirline> businessReviews, ReviewAirline avgBusinessReview, List<ReviewAirline> firstReviews,
 			ReviewAirline avgFirstReview, List<ReviewAirline> emptyReviews, ReviewAirline avgEmptyReview)
-			throws IllegalAccessException, NullPointerException {
+			throws IllegalArgumentException, NullPointerException {
 
 		super(id, name, surname, country);
 		if (economyReviews == null || avgEconomyReview == null || premiumReviews == null || avgPremiumReview == null
