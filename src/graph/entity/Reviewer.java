@@ -221,6 +221,14 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 	 */
 	public boolean reviewersCloseness(Reviewer r, String cabinClass) {
 
+		if(r == null){
+			throw new NullPointerException("Reviewer argument is null");
+		}
+		
+		if(cabinClass == null){
+			throw new NullPointerException("Cabin class argument is null");
+		}
+		
 		switch (cabinClass) {
 		case "ECONOMY":
 			return (this.avgEconomyReview.matches(r.avgEconomyReview));

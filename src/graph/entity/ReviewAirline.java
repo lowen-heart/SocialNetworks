@@ -187,11 +187,15 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 	 */
 	public boolean matches(ReviewAirline r) {
 
+		
 		if (r == null) {
 			throw new NullPointerException("Airline review is null");
 		}
+		
+		//counter for matches
 		int matches = 0;
 
+		//calculate all the delta between the ratings. It must be a delta +/- 1 to be ok as close review
 		float cabinDelta = this.getCabinStaffRating() - r.getCabinStaffRating();
 		float foodDelta = this.getFoodBeverageRating() - r.getFoodBeverageRating();
 		float entertainmentDelta = this.getInflightEntertainmentRating() - r.getInflightEntertainmentRating();
@@ -214,6 +218,7 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 			matches++;
 		}
 
+		//if there are 4 or more matches the two reviews are close each other
 		if (matches >= 4) {
 			return true;
 		}
