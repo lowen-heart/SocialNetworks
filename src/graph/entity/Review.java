@@ -18,7 +18,7 @@ public class Review {
 	public Review(LocalDate date, String content, float overallRating, boolean recommended) {
 		super();
 		if(date == null || content == null){
-			throw new IllegalArgumentException("Date or content is null");
+			throw new NullPointerException("Date or content is null");
 		}
 		if(overallRating < 0 || overallRating > 10){
 			throw new IllegalArgumentException("Overall rating needs to be between 0 and 10");

@@ -39,6 +39,14 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 
 		super(date, content, overallRating, recommended);
 
+		if(cabinClass == null){
+			throw new NullPointerException("Cabin class is null");
+		}
+		
+		if(name == null){
+			throw new NullPointerException("Name is null");
+		}
+		
 		if (seatComfortRating < 0 || seatComfortRating > 5) {
 			throw new IllegalArgumentException("Seat comfort rating is less than 0 or greater than 5");
 		}
@@ -186,10 +194,13 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 	 * @return
 	 */
 	public boolean matches(ReviewAirline r) {
-
 		
 		if (r == null) {
 			throw new NullPointerException("Airline review is null");
+		}
+
+		if(!this.getCabinClass().equals(r.getCabinClass())){
+			throw new IllegalArgumentException("Reviews are not on the same cabin class");
 		}
 		
 		//counter for matches
@@ -274,17 +285,15 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(ReviewAirline o) {
+	public int compareTo(ReviewAirline reviewAirline) {
 
-		if (this == o)
+		if (this == reviewAirline)
 			return 0;
-		if (o == null || !(o instanceof ReviewAirline)) {
-			throw new IllegalArgumentException("Object is null or not a ReviewAirline object");
+		if (reviewAirline == null) {
+			throw new NullPointerException("Object is null");
 		}
 
-		ReviewAirline reviewAirline = (ReviewAirline) o;
-
-		if (equals(o)) {
+		if (equals(reviewAirline)) {
 			return 0;
 		} else {
 			if (this.cabinClass.equals(reviewAirline.getCabinClass())
@@ -306,7 +315,7 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 			}
 		}
 
-		return -3;
+		return 0;
 
 	}
 
