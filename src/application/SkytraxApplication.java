@@ -13,6 +13,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,7 +43,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 	 */
 	private static final long serialVersionUID = 9080966197484218070L;
 
-	private HashMap<Classes, String> cabinClass = new HashMap<Classes, String>() {
+	private static final HashMap<Classes, String> cabinClass = new HashMap<Classes, String>() {
 		/**
 		 * 
 		 */
@@ -57,6 +58,8 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 		}
 	};
 
+	private static final String SELECTED = cabinClass.get(ReviewAirline.Classes.PREMIUMECONOMY);
+	
 	private Graph guigraph;
 	private graph.Graph graph;
 	private Reviewer best;
@@ -84,7 +87,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 		dragged = false;
 		keypressed = false;
 
-		loadData(cabinClass.get(ReviewAirline.Classes.ECONOMY), "data/skytrax_airline_review_test_150.csv");
+		loadData(cabinClass.get(ReviewAirline.Classes.PREMIUMECONOMY), "data/skytrax_airline_review_test_150.csv");
 		initUI();
 
 	}
@@ -98,9 +101,13 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 		}
 		guigraph = new MultiGraph("Skytrax Airline Reviews");
 
-		GraphLoader.loadAirportsReviewsFromCSV(graph, guigraph, cabinClass, file);
+		try {
+			GraphLoader.loadAirportsReviewsFromCSV(graph, guigraph, cabinClass, file);
+		} catch (IOException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
 
-		GraphLoader.calculateEdges(graph, guigraph, cabinClass);
+		//GraphLoader.calculateEdges(graph, guigraph, cabinClass);
 
 		best = ((CapGraph) graph).getBest().getValue();
 		worst = ((CapGraph) graph).getWorst().getValue();
@@ -243,6 +250,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 		comboClasses.addItem(cabinClass.get(ReviewAirline.Classes.BUSINESS));
 		comboClasses.addItem(cabinClass.get(ReviewAirline.Classes.FIRSTCLASS));
 		comboClasses.addItem(cabinClass.get(ReviewAirline.Classes.EMPTY));
+		comboClasses.setSelectedItem(SELECTED);
 
 		ActionListener cbActionListener = new ActionListener() {
 			@Override
@@ -290,6 +298,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 		easyQuestion2 = new JButton();
 		easyQuestion2.setPreferredSize(new Dimension(150, 70));
 		easyQuestion2.setText("<html>Easy 2: Fundamental Reviewers</html>");
+		easyQuestion2.setVisible(false);
 		// add actionlistner to listen for changes
 		ActionListener eq2ActionListener = new ActionListener() {
 

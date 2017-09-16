@@ -48,11 +48,24 @@ public class GraphLoader {
 	 * @param cabinClass
 	 * @param fileName
 	 */
-	public static void loadAirportsReviewsFromCSV(graph.Graph g, Graph guigraph, String cabinClass, String fileName) {
+	public static void loadAirportsReviewsFromCSV(graph.Graph g, Graph guigraph, String cabinClass, String fileName) throws IOException, IllegalAccessException{
 		boolean result;
 		BufferedReader buffer = null;
 		Set<Reviewer> seen = new HashSet<Reviewer>();
-
+		
+		if(cabinClass == null){
+			throw new NullPointerException("Cabin class is null");
+		}
+		if(g == null){
+			throw new NullPointerException("Graph is null");
+		}
+		if(guigraph == null){
+			throw new NullPointerException("GUI Graph is null");
+		}
+		if(fileName == null){
+			throw new NullPointerException("File name is null");
+		}
+		
 		try {
 			String line;
 			buffer = new BufferedReader(new FileReader(fileName));
@@ -70,7 +83,11 @@ public class GraphLoader {
 				index++;
 			}
 			System.out.println("LOADED");
+			
+			calculateEdges(g,guigraph,cabinClass);
+			
 		} catch (IOException | IllegalAccessException e) {
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		} finally {
 			try {
@@ -88,7 +105,7 @@ public class GraphLoader {
 	 * @param guigraph
 	 * @param cabinClass
 	 */
-	public static void calculateEdges(graph.Graph g, Graph guigraph, String cabinClass) {
+	private static void calculateEdges(graph.Graph g, Graph guigraph, String cabinClass){
 
 		boolean closeness = false;
 
@@ -142,7 +159,6 @@ public class GraphLoader {
 					((CapGraph) g).setWorst(from);
 				}
 				break;
-
 			}
 			
 

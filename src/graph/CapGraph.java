@@ -81,7 +81,6 @@ public class CapGraph implements Graph {
 		// TOMITA'S VARIABLES
 		this.nodes = maxSize = 0;
 		this.cpuTime = timeLimit = -1;
-		//this.style = style;
 		this.solution = new LinkedList<Reviewer>();
 	}
 
@@ -128,7 +127,7 @@ public class CapGraph implements Graph {
 	@Override
 	public void addEdge(Reviewer from, Reviewer to) {
 		if (from == null || to == null) {
-			throw new IllegalArgumentException("A reviewer passed is null");
+			throw new NullPointerException("A reviewer passed is null");
 		}
 
 		Vertex<Reviewer> vertexFrom = new Vertex<Reviewer>(from);
@@ -270,6 +269,15 @@ public class CapGraph implements Graph {
 	 * @return returns the list of neighbors of a vertex
 	 */
 	private List<Vertex<Reviewer>> getNeighbors(Reviewer reviewer) {
+		
+		if(reviewer == null){
+			throw new NullPointerException("Reviewer is null");
+		}
+		
+		if(!isVertex(reviewer)){
+			throw new NullPointerException("Vertex not in graph");
+		}
+		
 		ArrayList<Vertex<Reviewer>> neighbors = new ArrayList<Vertex<Reviewer>>();
 		Vertex<Reviewer> v = new Vertex<Reviewer>(reviewer);
 
@@ -399,6 +407,11 @@ public class CapGraph implements Graph {
 		return g;
 	}
 
+	/**
+	 * @param start
+	 * @param end
+	 * @return
+	 */
 	public List<Reviewer> degreesOfSeparation(Reviewer start, Reviewer end) {
 
 		if (start == null || end == null) {
@@ -408,40 +421,127 @@ public class CapGraph implements Graph {
 		return biBfs(start, end);
 	}
 
-	public List<Reviewer> biBfs(Reviewer start, Reviewer end) {
+	/**
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	private List<Reviewer> biBfs(Reviewer start, Reviewer end) {
 
+		//Initialize starting point
 		Queue<Reviewer> queueStart = new LinkedList<Reviewer>();
 		HashSet<Reviewer> visitedStart = new HashSet<Reviewer>();
 		HashMap<Reviewer, Reviewer> parentStart = new HashMap<Reviewer, Reviewer>();
+		List<Reviewer> pathFromStart = new LinkedList<Reviewer>();
 		queueStart.add(start);
 		visitedStart.add(start);
 
+		//Initialize ending point
 		Queue<Reviewer> queueEnd = new LinkedList<Reviewer>();
 		HashSet<Reviewer> visitedEnd = new HashSet<Reviewer>();
 		HashMap<Reviewer, Reviewer> parentEnd = new HashMap<Reviewer, Reviewer>();
+		List<Reviewer> pathFromEnd = new LinkedList<Reviewer>();
 		queueEnd.add(end);
 		visitedEnd.add(end);
 
-		List<Reviewer> pathFromStart = new LinkedList<Reviewer>();
-		List<Reviewer> pathFromEnd = new LinkedList<Reviewer>();
-
-		// pathFromStart.add(start);
-		// pathFromEnd.add(end);
-
+		//call bidirectional BFS and if returns a Reviewer that is the collision reviewer where the two BFS encountered
 		Reviewer collisionReviewer = biBfsSearchVisit(queueStart, visitedStart, parentStart, queueEnd, visitedEnd,
 				parentEnd, pathFromStart, pathFromEnd);
+		
+		//if exist a collision reviewer build the path between the starting and ending point, if not there is no path
 		if (collisionReviewer != null) {
 			return printPath(start, end, parentStart, parentEnd, collisionReviewer);
 		} else {
-			System.out.println("No path found");
+			System.out.println("NO PATH FOUND");
 			return null;
 		}
 
 	}
 
+	/**
+	 * @param queueStart
+	 * @param visitedStart
+	 * @param parentStart
+	 * @param queueEnd
+	 * @param visitedEnd
+	 * @param parentEnd
+	 * @param pathFromStart
+	 * @param pathFromEnd
+	 * @return
+	 */
+	private Reviewer biBfsSearchVisit(Queue<Reviewer> queueStart, HashSet<Reviewer> visitedStart,
+			HashMap<Reviewer, Reviewer> parentStart, Queue<Reviewer> queueEnd, HashSet<Reviewer> visitedEnd,
+			HashMap<Reviewer, Reviewer> parentEnd, List<Reviewer> pathFromStart, List<Reviewer> pathFromEnd) {
+
+		while (!queueStart.isEmpty() && !queueEnd.isEmpty()) {
+			Reviewer currFromStart = queueStart.remove();
+			Reviewer currFromEnd = queueEnd.remove();
+
+			for (Reviewer pfs : pathFromStart) {
+				for (Reviewer pfe : pathFromEnd) {
+					// System.out.println("From Start: " + pfs);
+					// System.out.println("From End: " + pfe);
+					if (pfs.equals(pfe)) {
+						//System.out.println("Matching Reviewer:" + pfs);
+						return pfs;
+					}
+				}
+			}
+
+			pathFromStart.clear();
+			pathFromEnd.clear();
+
+			List<Vertex<Reviewer>> neighborsStart = getNeighbors(currFromStart);
+			ListIterator<Vertex<Reviewer>> neighStartIter = neighborsStart.listIterator(neighborsStart.size());
+
+			while (neighStartIter.hasPrevious()) {
+				Reviewer nextStart = neighStartIter.previous().getValue();
+				// System.out.println("CurrFromStart: " + currFromStart);
+				pathFromStart.add(nextStart);
+				// System.out.println("Next Start:" + nextStart);
+				if (!visitedStart.contains(nextStart)) {
+					visitedStart.add(nextStart);
+					parentStart.put(nextStart, currFromStart);
+					//System.out.println("Next: " + nextStart.getId() + " Curr: " + currFromStart.getId());
+					queueStart.add(nextStart);
+
+				}
+			}
+
+			List<Vertex<Reviewer>> neighborsEnd = getNeighbors(currFromEnd);
+			ListIterator<Vertex<Reviewer>> neighEndIter = neighborsEnd.listIterator(neighborsEnd.size());
+
+			while (neighEndIter.hasPrevious()) {
+				Reviewer nextEnd = neighEndIter.previous().getValue();
+				// System.out.println("CurrFromStart: " + currFromStart);
+				pathFromEnd.add(nextEnd);
+				// System.out.println("Next End:" + nextEnd);
+				if (!visitedEnd.contains(nextEnd)) {
+					visitedEnd.add(nextEnd);
+					parentEnd.put(nextEnd, currFromEnd);
+					//System.out.println("Next End: " + nextEnd.getId() + " Curr: " + currFromEnd.getId());
+					queueEnd.add(nextEnd);
+
+				}
+			}
+
+		}
+
+		return null;
+	}
+	
+	
+	/**
+	 * @param start
+	 * @param end
+	 * @param parentStart
+	 * @param parentEnd
+	 * @param collisionReviewer
+	 * @return
+	 */
 	private List<Reviewer> printPath(Reviewer start, Reviewer end, HashMap<Reviewer, Reviewer> parentStart,
 			HashMap<Reviewer, Reviewer> parentEnd, Reviewer collisionReviewer) {
-		System.out.println("Print Path");
+		
 		LinkedList<Reviewer> path = new LinkedList<Reviewer>();
 
 		Reviewer curr = collisionReviewer;
@@ -471,71 +571,9 @@ public class CapGraph implements Graph {
 		// add start to the begin
 		path.addLast(start);
 
-		System.out.println("Done");
+		System.out.println("DONE");
 
 		return path;
-	}
-
-	public Reviewer biBfsSearchVisit(Queue<Reviewer> queueStart, HashSet<Reviewer> visitedStart,
-			HashMap<Reviewer, Reviewer> parentStart, Queue<Reviewer> queueEnd, HashSet<Reviewer> visitedEnd,
-			HashMap<Reviewer, Reviewer> parentEnd, List<Reviewer> pathFromStart, List<Reviewer> pathFromEnd) {
-
-		while (!queueStart.isEmpty() && !queueEnd.isEmpty()) {
-			Reviewer currFromStart = queueStart.remove();
-			Reviewer currFromEnd = queueEnd.remove();
-
-			for (Reviewer pfs : pathFromStart) {
-				for (Reviewer pfe : pathFromEnd) {
-					// System.out.println("From Start: " + pfs);
-					// System.out.println("From End: " + pfe);
-					if (pfs.equals(pfe)) {
-						System.out.println("Matching Reviewer:" + pfs);
-						return pfs;
-					}
-				}
-			}
-
-			pathFromStart.clear();
-			pathFromEnd.clear();
-
-			List<Vertex<Reviewer>> neighborsStart = getNeighbors(currFromStart);
-			ListIterator<Vertex<Reviewer>> neighStartIter = neighborsStart.listIterator(neighborsStart.size());
-
-			while (neighStartIter.hasPrevious()) {
-				Reviewer nextStart = neighStartIter.previous().getValue();
-				// System.out.println("CurrFromStart: " + currFromStart);
-				pathFromStart.add(nextStart);
-				// System.out.println("Next Start:" + nextStart);
-				if (!visitedStart.contains(nextStart)) {
-					visitedStart.add(nextStart);
-					parentStart.put(nextStart, currFromStart);
-					System.out.println("Next: " + nextStart.getId() + " Curr: " + currFromStart.getId());
-					queueStart.add(nextStart);
-
-				}
-			}
-
-			List<Vertex<Reviewer>> neighborsEnd = getNeighbors(currFromEnd);
-			ListIterator<Vertex<Reviewer>> neighEndIter = neighborsEnd.listIterator(neighborsEnd.size());
-
-			while (neighEndIter.hasPrevious()) {
-				Reviewer nextEnd = neighEndIter.previous().getValue();
-				// System.out.println("CurrFromStart: " + currFromStart);
-				pathFromEnd.add(nextEnd);
-				// System.out.println("Next End:" + nextEnd);
-				if (!visitedEnd.contains(nextEnd)) {
-					visitedEnd.add(nextEnd);
-					parentEnd.put(nextEnd, currFromEnd);
-					System.out.println("Next End: " + nextEnd.getId() + " Curr: " + currFromEnd.getId());
-
-					queueEnd.add(nextEnd);
-
-				}
-			}
-
-		}
-
-		return null;
 	}
 
 	/**
@@ -581,8 +619,11 @@ public class CapGraph implements Graph {
 		this.worst = worst;
 	}
 
-	//TOMITAS'S ALGORITHM CLIQUES
+	//TOMITAS'S ALGORITHM MAX CLIQUE
 
+	/**
+	 * @return
+	 */
 	public LinkedList<Reviewer> search() {
 
 		cpuTime = System.currentTimeMillis();
@@ -610,6 +651,9 @@ public class CapGraph implements Graph {
 		
 	}
 
+	/**
+	 * @param ColOrd
+	 */
 	private void orderVertices(ArrayList<Vertex<Reviewer>> ColOrd) {
 
 		ArrayList<Vertex<Reviewer>> v = new ArrayList<Vertex<Reviewer>>();
@@ -619,12 +663,17 @@ public class CapGraph implements Graph {
 
 		//sort v using the comparator defined
 		v.sort(new TomitaComparator<Vertex<Reviewer>>());
+		
 		// add ordered vertices to ColOrd that is P ordered by colors
 		ColOrd.addAll(v);
 
 	}
 
-	void expand(ArrayList<Vertex<Reviewer>> C, ArrayList<Vertex<Reviewer>> P) {
+	/**
+	 * @param C
+	 * @param P
+	 */
+	private void expand(ArrayList<Vertex<Reviewer>> C, ArrayList<Vertex<Reviewer>> P) {
 		
 		if (timeLimit > 0 && (System.currentTimeMillis() - cpuTime) >= timeLimit) {
 			return;
@@ -669,6 +718,11 @@ public class CapGraph implements Graph {
 		}
 	}
 
+	/**
+	 * @param ColOrd
+	 * @param P
+	 * @param color
+	 */
 	private void numberSort(ArrayList<Vertex<Reviewer>> ColOrd, ArrayList<Vertex<Reviewer>> P, int[] color) {
 		
 		int colors = 0;
@@ -702,7 +756,13 @@ public class CapGraph implements Graph {
 		}
 	}
 
-	//check if a given vertex is linked with a vertex of a given color class
+	/**
+	 * Check if a given vertex is linked with a vertex of a given color class
+	 * 
+	 * @param v
+	 * @param colorClass
+	 * @return
+	 */
 	private boolean conflicts(Vertex<Reviewer> v, ArrayList<Vertex<Reviewer>> colorClass) {
 		
 		for(Vertex<Reviewer> w : colorClass){		
@@ -714,7 +774,10 @@ public class CapGraph implements Graph {
 		return false;
 	}
 
-	void saveSolution(ArrayList<Vertex<Reviewer>> C) {
+	/**
+	 * @param C
+	 */
+	private void saveSolution(ArrayList<Vertex<Reviewer>> C) {
 
 		for(Vertex<Reviewer> v : C){
 			solution.add(v.getValue());
@@ -724,6 +787,9 @@ public class CapGraph implements Graph {
 		
 	}
 
+	/**
+	 * @return
+	 */
 	public int getMaxSize() {
 		return maxSize;
 	}

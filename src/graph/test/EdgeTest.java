@@ -14,17 +14,22 @@ public class EdgeTest {
 
 	@Before
 	public void setUp() throws Exception {
-		edgeTest1 = new Edge<String>("Alice","Bob");
-		edgeTest2 = new Edge<String>("Alice","Cher");
+		edgeTest1 = new Edge<String>("Gregory","Bob");
+		edgeTest2 = new Edge<String>("Gregory","Gusti");
 	}
 
 	@Test
 	public void testToString() {
+		System.out.println("-------- START TEST TO STRING  --------");
+		
 		System.out.println(edgeTest1 + " and " + edgeTest2);
+		
+		System.out.println("-------- END TEST TO STRING --------");
 	}
 
 	@Test
 	public void testEqualsObject() {
+		System.out.println("-------- START TEST EQUALS --------");
 		
 		assertFalse("Null object",edgeTest1.equals(null));
 		
@@ -39,6 +44,8 @@ public class EdgeTest {
 		assertEquals(edgeTest1.equals(edgeTest2),true);
 		
 		assertFalse("They are not the same object so equals returns false",edgeTest1.equals(new Object()));
+		
+		System.out.println("-------- END TEST EQUALS --------");
 	}
 
 }

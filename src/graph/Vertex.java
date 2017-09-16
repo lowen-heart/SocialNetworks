@@ -81,6 +81,5 @@ public class Vertex <E extends Comparable<E>> {
 	public String toString() {
 		return value.toString();
 	}
-
 	
 }
