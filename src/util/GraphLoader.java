@@ -7,11 +7,13 @@
 package util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Set;
 
 import org.graphstream.graph.Graph;
@@ -27,65 +29,89 @@ public class GraphLoader {
 	 * Loads graph with data from a file. The file should consist of lines with
 	 * 2 integers each, corresponding to a "from" vertex and a "to" vertex.
 	 */
+	/*
 	public static void loadGraph(graph.Graph g, String filename) {
-		/*
-		 * Set<Integer> seen = new HashSet<Integer>(); Scanner sc; try { sc =
-		 * new Scanner(new File(filename)); } catch (Exception e) {
-		 * e.printStackTrace(); return; } // Iterate over the lines in the file,
-		 * adding new // vertices as they are found and connecting them with
-		 * edges. while (sc.hasNextInt()) { int v1 = sc.nextInt(); int v2 =
-		 * sc.nextInt(); if (!seen.contains(v1)) { g.addVertex(v1);
-		 * seen.add(v1); } if (!seen.contains(v2)) { g.addVertex(v2);
-		 * seen.add(v2); } g.addEdge(v1, v2); }
-		 * 
-		 * sc.close();
-		 */
+
+		Set<Integer> seen = new HashSet<Integer>();
+		Scanner sc;
+		try {
+			sc = new Scanner(new File(filename));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		// Iterate over the lines in the file,adding new vertices as they are
+		// found and connecting them with edges.
+		while (sc.hasNextInt()) {
+			int v1 = sc.nextInt();
+			int v2 = sc.nextInt();
+			if (!seen.contains(v1)) {
+				g.addVertex(v1);
+				seen.add(v1);
+			}
+			if (!seen.contains(v2)) {
+				g.addVertex(v2);
+				seen.add(v2);
+			}
+			g.addEdge(v1, v2);
+		}
+
+		sc.close();
+
 	}
+	*/
 
 	/**
-	 * @param g
+	 * This function loads Airport Reviews from a CSV file in a defined format into a CapGraph object and a GUI Graph object
+	 * to represent it later in a GUI
+	 * 
+	 * @param graph
 	 * @param guigraph
 	 * @param cabinClass
 	 * @param fileName
 	 */
-	public static void loadAirportsReviewsFromCSV(graph.Graph g, Graph guigraph, String cabinClass, String fileName) throws IOException, IllegalAccessException{
+	public static void loadAirportsReviewsFromCSV(graph.Graph graph, Graph guigraph, String cabinClass, String fileName)
+			throws IOException, IllegalAccessException {
 		boolean result;
 		BufferedReader buffer = null;
 		Set<Reviewer> seen = new HashSet<Reviewer>();
-		
-		if(cabinClass == null){
+
+		//Argument checks
+		if (cabinClass == null) {
 			throw new NullPointerException("Cabin class is null");
 		}
-		if(g == null){
+		if (graph == null) {
 			throw new NullPointerException("Graph is null");
 		}
-		if(guigraph == null){
+		if (guigraph == null) {
 			throw new NullPointerException("GUI Graph is null");
 		}
-		if(fileName == null){
+		if (fileName == null) {
 			throw new NullPointerException("File name is null");
 		}
-		
+
 		try {
 			String line;
 			buffer = new BufferedReader(new FileReader(fileName));
-			//System.out.println("Header: " + buffer.readLine());
+			// System.out.println("Header: " + buffer.readLine());
 			System.out.println("LOADING CABIN CLASS: " + cabinClass);
 			int index = 0;
 			// How to read file in java line by line?
 			while ((line = buffer.readLine()) != null) {
 				// System.out.println("Raw CSV data: " + line);
-				result = utilityCSVtoList(index, line, g, guigraph, cabinClass, seen);
-				if(!result){
+				//call helper class to load a single line from the CSV file
+				result = utilityCSVtoList(index, line, graph, guigraph, cabinClass, seen);
+				if (!result) {
 					System.out.println("ERROR LOADING");
 				}
 				// System.out.println("Converted data: " + result + "\n");
 				index++;
 			}
 			System.out.println("LOADED");
-			
-			calculateEdges(g,guigraph,cabinClass);
-			
+
+			//call helper class that calculates edges based on a defined convention
+			calculateEdges(graph, guigraph, cabinClass);
+
 		} catch (IOException | IllegalAccessException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -101,73 +127,95 @@ public class GraphLoader {
 	}
 
 	/**
-	 * @param g
+	 * Helper class that calculate and add edges inside the two graph objects.
+	 * 
+	 * @param graph
 	 * @param guigraph
 	 * @param cabinClass
 	 */
-	private static void calculateEdges(graph.Graph g, Graph guigraph, String cabinClass){
+	private static void calculateEdges(graph.Graph graph, Graph guigraph, String cabinClass) {
 
 		boolean closeness = false;
 
-		Set<Vertex<Reviewer>> verteces = ((CapGraph) g).getVertices();
+		Set<Vertex<Reviewer>> verteces = ((CapGraph) graph).getVertices();
 
 		for (Vertex<Reviewer> from : verteces) {
 			
+			//calculate best and worst Reviewer for the selected class passed with cabinClass argument
 			switch (cabinClass) {
-			case "Economy": case "ECONOMY":
-				if(from.getValue().getAvgEconomyReview().compareTo(((CapGraph) g).getBest().getValue().getAvgEconomyReview()) == 1){
-					((CapGraph) g).setBest(from);
+			case "Economy":
+			case "ECONOMY":
+				if (from.getValue().getAvgEconomyReview()
+						.compareTo(((CapGraph) graph).getBest().getValue().getAvgEconomyReview()) == 1) {
+					((CapGraph) graph).setBest(from);
 				}
-				
-				if(from.getValue().getAvgEconomyReview().compareTo(((CapGraph) g).getWorst().getValue().getAvgEconomyReview()) == -1){
-					((CapGraph) g).setWorst(from);
-				}
-				break;
-			case "Premium Economy": case "PREMIUMECONOMY":
-				if(from.getValue().getAvgPremiumReview().compareTo(((CapGraph) g).getBest().getValue().getAvgPremiumReview()) == 1){
-					((CapGraph) g).setBest(from);
-				}
-				
-				if(from.getValue().getAvgPremiumReview().compareTo(((CapGraph) g).getWorst().getValue().getAvgPremiumReview()) == -1){
-					((CapGraph) g).setWorst(from);
+
+				if (from.getValue().getAvgEconomyReview()
+						.compareTo(((CapGraph) graph).getWorst().getValue().getAvgEconomyReview()) == -1) {
+					((CapGraph) graph).setWorst(from);
 				}
 				break;
-			case "Business Class": case"BUSINESS":
-				if(from.getValue().getAvgBusinessReview().compareTo(((CapGraph) g).getBest().getValue().getAvgBusinessReview()) == 1){
-					((CapGraph) g).setBest(from);
+			case "Premium Economy":
+			case "PREMIUMECONOMY":
+				if (from.getValue().getAvgPremiumReview()
+						.compareTo(((CapGraph) graph).getBest().getValue().getAvgPremiumReview()) == 1) {
+					((CapGraph) graph).setBest(from);
 				}
-				
-				if(from.getValue().getAvgBusinessReview().compareTo(((CapGraph) g).getWorst().getValue().getAvgBusinessReview()) == -1){
-					((CapGraph) g).setWorst(from);
-				}
-				break;
-			case "First Class": case "FIRSTCLASS":
-				if(from.getValue().getAvgFirstReview().compareTo(((CapGraph) g).getBest().getValue().getAvgFirstReview()) == 1){
-					((CapGraph) g).setBest(from);
-				}
-				
-				if(from.getValue().getAvgFirstReview().compareTo(((CapGraph) g).getWorst().getValue().getAvgFirstReview()) == -1){
-					((CapGraph) g).setWorst(from);
+
+				if (from.getValue().getAvgPremiumReview()
+						.compareTo(((CapGraph) graph).getWorst().getValue().getAvgPremiumReview()) == -1) {
+					((CapGraph) graph).setWorst(from);
 				}
 				break;
-			case "": case "EMPTY":
-				if(from.getValue().getAvgEmptyReview().compareTo(((CapGraph) g).getBest().getValue().getAvgEmptyReview()) == 1){
-					((CapGraph) g).setBest(from);
+			case "Business Class":
+			case "BUSINESS":
+				if (from.getValue().getAvgBusinessReview()
+						.compareTo(((CapGraph) graph).getBest().getValue().getAvgBusinessReview()) == 1) {
+					((CapGraph) graph).setBest(from);
 				}
-				
-				if(from.getValue().getAvgEmptyReview().compareTo(((CapGraph) g).getWorst().getValue().getAvgEmptyReview()) == -1){
-					((CapGraph) g).setWorst(from);
+
+				if (from.getValue().getAvgBusinessReview()
+						.compareTo(((CapGraph) graph).getWorst().getValue().getAvgBusinessReview()) == -1) {
+					((CapGraph) graph).setWorst(from);
+				}
+				break;
+			case "First Class":
+			case "FIRSTCLASS":
+				if (from.getValue().getAvgFirstReview()
+						.compareTo(((CapGraph) graph).getBest().getValue().getAvgFirstReview()) == 1) {
+					((CapGraph) graph).setBest(from);
+				}
+
+				if (from.getValue().getAvgFirstReview()
+						.compareTo(((CapGraph) graph).getWorst().getValue().getAvgFirstReview()) == -1) {
+					((CapGraph) graph).setWorst(from);
+				}
+				break;
+			case "":
+			case "EMPTY":
+				if (from.getValue().getAvgEmptyReview()
+						.compareTo(((CapGraph) graph).getBest().getValue().getAvgEmptyReview()) == 1) {
+					((CapGraph) graph).setBest(from);
+				}
+
+				if (from.getValue().getAvgEmptyReview()
+						.compareTo(((CapGraph) graph).getWorst().getValue().getAvgEmptyReview()) == -1) {
+					((CapGraph) graph).setWorst(from);
 				}
 				break;
 			}
-			
 
 			for (Vertex<Reviewer> to : verteces) {
-				
+
+				//if vertex "to" is not the same that is iterated with the external for "from"
 				if (!to.equals(from)) {
 
+					/*Get closeness parameter to check if the two vertices are connected based on a pre-defined convention.
+					  Two vertices are linked if 4 of 5 of their detailed reviews have at least -/+ 1 as delta value.
+					  Calculate it based on cabin class.*/
 					switch (cabinClass) {
-					case "Economy": case "ECONOMY":
+					case "Economy":
+					case "ECONOMY":
 						if (!from.getValue().getEconomyReviews().isEmpty()
 								&& !to.getValue().getEconomyReviews().isEmpty()) {
 
@@ -176,7 +224,8 @@ public class GraphLoader {
 
 						}
 						break;
-					case "Premium Economy": case "PREMIUMECONOMY":
+					case "Premium Economy":
+					case "PREMIUMECONOMY":
 						if (!from.getValue().getPremiumReviews().isEmpty()
 								&& !to.getValue().getPremiumReviews().isEmpty()) {
 
@@ -185,7 +234,8 @@ public class GraphLoader {
 
 						}
 						break;
-					case "Business Class": case"BUSINESS":
+					case "Business Class":
+					case "BUSINESS":
 						if (!from.getValue().getBusinessReviews().isEmpty()
 								&& !to.getValue().getBusinessReviews().isEmpty()) {
 
@@ -194,7 +244,8 @@ public class GraphLoader {
 
 						}
 						break;
-					case "First Class": case "FIRSTCLASS":
+					case "First Class":
+					case "FIRSTCLASS":
 						if (!from.getValue().getFirstReviews().isEmpty()
 								&& !to.getValue().getFirstReviews().isEmpty()) {
 
@@ -203,7 +254,8 @@ public class GraphLoader {
 
 						}
 						break;
-					case "": case "EMPTY":
+					case "":
+					case "EMPTY":
 						if (!from.getValue().getEmptyReviews().isEmpty()
 								&& !to.getValue().getEmptyReviews().isEmpty()) {
 
@@ -216,31 +268,47 @@ public class GraphLoader {
 					}
 
 					if (closeness) {
-						/*System.out.print("From: " + from.getValue().getId());
-						System.out.print(" - To: " + to.getValue().getId());
-						System.out.println(" - Closensess: " + closeness);
-						System.out.println("Edges: " + from.getValue().getId() + " - " + to.getValue().getId());*/
-						g.addEdge(from.getValue(), to.getValue());
-						if(guigraph.getEdge(String.valueOf(from.getValue().getId()) + "-" + String.valueOf(to.getValue().getId())) == null && guigraph.getEdge(String.valueOf(to.getValue().getId()) + "-" + String.valueOf(from.getValue().getId())) == null){
-							guigraph.addEdge(String.valueOf(from.getValue().getId()) + "-" + String.valueOf(to.getValue().getId()),
-									String.valueOf(from.getValue().getId()), String.valueOf(to.getValue().getId()));
-							//System.out.println("Gui Edge: " + (guigraph.getEdge(String.valueOf(from.getValue().getId()) + "-" + String.valueOf(to.getValue().getId()))).toString());
+						/*
+						 * System.out.print("From: " + from.getValue().getId());
+						 * System.out.print(" - To: " + to.getValue().getId());
+						 * System.out.println(" - Closensess: " + closeness);
+						 * System.out.println("Edges: " +
+						 * from.getValue().getId() + " - " +
+						 * to.getValue().getId());
+						 */
+						graph.addEdge(from.getValue(), to.getValue());
+						
+						//if the edge does not exists inside the GUI Graph object add it.
+						if (guigraph.getEdge(String.valueOf(from.getValue().getId()) + "-" + String.valueOf(to.getValue().getId())) == null
+								&& guigraph.getEdge(String.valueOf(to.getValue().getId()) + "-" + String.valueOf(from.getValue().getId())) == null) {
+							guigraph.addEdge(
+									String.valueOf(from.getValue().getId()) + "-" + String.valueOf(to.getValue().getId()),
+									String.valueOf(from.getValue().getId()), 
+									String.valueOf(to.getValue().getId()));
+							// System.out.println("Gui Edge: " +
+							// (guigraph.getEdge(String.valueOf(from.getValue().getId())
+							// + "-" +
+							// String.valueOf(to.getValue().getId()))).toString());
 						}
 					}
-
+					
+					//reset closeness value
 					closeness = false;
 
 				}
-				
+
 			}
 
 		}
-		System.out.println("Best " + ((CapGraph) g).getBest().getValue());
-		System.out.println("Worst " + ((CapGraph) g).getWorst().getValue());
+		//info about the reviewers with the best and worst review
+		System.out.println("Best: " + ((CapGraph) graph).getBest().getValue());
+		System.out.println("Worst: " + ((CapGraph) graph).getWorst().getValue());
 	}
 
-	// Utility which converts CSV to ArrayList using Split Operation
+	
 	/**
+	 * Utility which converts CSV to ArrayList using Split Operation
+	 * 
 	 * @param index
 	 * @param line
 	 * @param g
@@ -267,9 +335,12 @@ public class GraphLoader {
 					reviewer = new Reviewer(index, "", nameSurname[0].trim(), splitData[2].trim());
 				}
 
-				// System.out.println("Name Surname: " + reviewer.getName() + " " + reviewer.getSurname());
+				// System.out.println("Name Surname: " + reviewer.getName() + "
+				// " + reviewer.getSurname());
 
-				// Reviewer reviewer = new Reviewer(index,nameSurname[0].trim(),nameSurname[1].trim(), splitData[2].trim());
+				// Reviewer reviewer = new
+				// Reviewer(index,nameSurname[0].trim(),nameSurname[1].trim(),
+				// splitData[2].trim());
 
 				DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 				LocalDate date = null;
@@ -287,12 +358,10 @@ public class GraphLoader {
 
 					g.addVertex(reviewer);
 					guigraph.addNode(String.valueOf(index));
-					guigraph.getNode(String.valueOf(index)).addAttribute("ui.label", index + " - " + 
-																		reviewer.getName().toString() + " " + 
-																		reviewer.getSurname().toString() + " - " + 
-																		reviewer.getCountry() + " - " + 
-																		airlineReview.getOverallRating());
-					//System.out.println(index + " GUI GRAPH INDEX: " + guigraph.getNode(String.valueOf(index)));
+					guigraph.getNode(String.valueOf(index)).addAttribute("ui.label",
+							index + " - " + reviewer.getName().toString() + " " + reviewer.getSurname().toString()
+									+ " - " + reviewer.getCountry() + " - " + airlineReview.getOverallRating());
+					// System.out.println(index + " GUI GRAPH INDEX: " + guigraph.getNode(String.valueOf(index)));
 					seen.add(reviewer);
 
 				} else {
@@ -305,7 +374,7 @@ public class GraphLoader {
 				// System.out.println("Converted data: " + reviewer.toString() + "\n");
 				return true;
 			}
-			
+
 			return true;
 		}
 

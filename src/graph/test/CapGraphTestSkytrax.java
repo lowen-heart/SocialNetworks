@@ -36,18 +36,23 @@ public class CapGraphTestSkytrax {
 
 	private static final String CHOSENCABINCLASS = cabinClass.get(ReviewAirline.Classes.PREMIUMECONOMY);
 	private static final String FILE = "data/skytrax_airline_review_test_150.csv";
+	private static final String FILE_50 = "data/skytrax_airline_review_test_50.csv";
 
 	private Graph guigraph;
 	private graph.Graph graph;
+	private Graph guigraph50;
+	private graph.Graph graph50;
 	private Reviewer best;
 	private Reviewer worst;
 	private Reviewer from;
 	private Reviewer to;
+	private Reviewer best50;
+	private Reviewer worst50;
 
 	@Before
 	public void setUp() throws Exception {
 
-		loadData(CHOSENCABINCLASS, FILE);
+		loadData(CHOSENCABINCLASS);
 
 		from = new Reviewer(3, "Test", "Person", "Unknown", new ArrayList<ReviewAirline>(),
 				new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 10.0f, "", 5.0f, 5.0f,
@@ -81,23 +86,28 @@ public class CapGraphTestSkytrax {
 
 	}
 
-	private void loadData(String cabinClass, String file) {
+	private void loadData(String cabinClass) {
 
 		try {
 			graph = new CapGraph();
+			graph50 = new CapGraph();
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
 		guigraph = new MultiGraph("Skytrax Airline Reviews Test CapGraph");
-
+		guigraph50 = new MultiGraph("Skytrax Airline Reviews Test CapGraph 50");
+		
 		try {
-			GraphLoader.loadAirportsReviewsFromCSV(graph, guigraph, cabinClass, file);
+			GraphLoader.loadAirportsReviewsFromCSV(graph, guigraph, cabinClass, FILE);
+			GraphLoader.loadAirportsReviewsFromCSV(graph50, guigraph50, cabinClass, FILE_50);
 		} catch (IOException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 
 		best = ((CapGraph) graph).getBest().getValue();
 		worst = ((CapGraph) graph).getWorst().getValue();
+		best50 = ((CapGraph) graph50).getBest().getValue();
+		worst50 = ((CapGraph) graph50).getWorst().getValue();
 
 	}
 
@@ -241,6 +251,9 @@ public class CapGraphTestSkytrax {
 		// Adding vertex to
 		graph.addVertex(from);
 		assertEquals(null, ((CapGraph) graph).degreesOfSeparation(from, worst));
+		
+		System.out.println("No path test");
+		assertEquals(null, ((CapGraph) graph50).degreesOfSeparation(best50, worst50));
 
 		System.out.println("-------- END TEST DEGREE OF SEPARATION --------");
 	}
@@ -273,6 +286,25 @@ public class CapGraphTestSkytrax {
 			}
 			System.out.println(r);
 		}
+		
+		System.out.println("Second test with 2 vertex clique");
+		
+
+		tomita = ((CapGraph) graph50).search();
+		for (Reviewer r : tomita) {
+			switch (r.getSurname()) {
+			case "Powell":
+				assertEquals("Powell", r.getSurname());
+				break;
+			case "Miller":
+				assertEquals("Miller", r.getSurname());
+				break;
+			default:
+				fail("Clique not correct");
+			}
+			System.out.println(r);
+		}
+
 
 		System.out.println("-------- END TEST TOMITA ALGORITHM  --------");
 	}
@@ -282,18 +314,18 @@ public class CapGraphTestSkytrax {
 		ArrayList<Vertex<Reviewer>> v = new ArrayList<Vertex<Reviewer>>();
 
 		// add all the vertices to v
-		v.addAll(((CapGraph)graph).getVertices());
-		
+		v.addAll(((CapGraph) graph).getVertices());
+
 		System.out.println("Not ordered");
-		for(Vertex<Reviewer> r : v){
+		for (Vertex<Reviewer> r : v) {
 			System.out.println(r.getValue() + " Degree: " + r.getDegree() + " Neighbour degree: " + r.getNeighborDeg());
 		}
-		
+
 		// sort v using the comparator defined
 		v.sort(new TomitaComparator<Vertex<Reviewer>>());
-		
+
 		System.out.println("Ordered");
-		for(Vertex<Reviewer> r : v){
+		for (Vertex<Reviewer> r : v) {
 			System.out.println(r.getValue() + " Degree: " + r.getDegree() + " Neighbour degree: " + r.getNeighborDeg());
 		}
 	}

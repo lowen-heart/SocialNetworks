@@ -267,6 +267,8 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 
 		// add items to the combo box
 		comboFiles.addItem("data/skytrax_airline_review_test_150.csv");
+		comboFiles.addItem("data/skytrax_airline_review_test_100.csv");
+		comboFiles.addItem("data/skytrax_airline_review_test_50.csv");
 		comboFiles.addItem("data/skytrax_airline_review_test.csv");
 		comboFiles.addItem("data/skytrax_airline_review.csv");
 		comboFiles.addActionListener(cbActionListener);
@@ -283,9 +285,13 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 				System.out.println("Button Easy 1 Pressed");
 				LinkedList<Reviewer> path = (LinkedList<Reviewer>) ((CapGraph) graph).degreesOfSeparation(worst, best);
 
-				printPath(path);
-
-				result.setText("Degree of separation: " + (path.size() - 1));
+				if(path != null){
+					printPath(path);
+				
+					result.setText("Degree of separation: " + (path.size() - 1));
+				}else{
+					result.setText("No path found");
+				}
 
 				((Component) graphView).repaint();
 				((Component) graphView).revalidate();
@@ -304,7 +310,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Button Pressed");
+				System.out.println("Button Easy Pressed");
 			}
 		};
 

@@ -5,6 +5,7 @@ package graph;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -14,6 +15,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
+
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 import graph.entity.ReviewAirline;
 import graph.entity.Reviewer;
@@ -408,9 +411,12 @@ public class CapGraph implements Graph {
 	}
 
 	/**
-	 * @param start
-	 * @param end
-	 * @return
+	 * Entry point for question 1 about degrees of separation. This method checks arguments passed 
+	 * and calls bidirectional BFS helper method.
+	 * 
+	 * @param start Starting point
+	 * @param end Ending point
+	 * @return Returns a List of Reviewers after running helper method biBfs(). Returns null if there is no path.
 	 */
 	public List<Reviewer> degreesOfSeparation(Reviewer start, Reviewer end) {
 
@@ -422,31 +428,35 @@ public class CapGraph implements Graph {
 	}
 
 	/**
-	 * @param start
-	 * @param end
-	 * @return
+	 * Helper method that prepares data structures to execute bidirectional BFS on graph. 
+	 *
+	 * @param start Starting point
+	 * @param end Ending point
+	 * @return Returns a List of Reviewers after running helper method biBfsSearchVisit(). Returns null if there is no path.
 	 */
 	private List<Reviewer> biBfs(Reviewer start, Reviewer end) {
 
-		//Initialize starting point
+		//Initialize starting point data structures
 		Queue<Reviewer> queueStart = new LinkedList<Reviewer>();
 		HashSet<Reviewer> visitedStart = new HashSet<Reviewer>();
 		HashMap<Reviewer, Reviewer> parentStart = new HashMap<Reviewer, Reviewer>();
-		List<Reviewer> pathFromStart = new LinkedList<Reviewer>();
+		List<Reviewer> frontierFromStart = new LinkedList<Reviewer>();
+		//Add start to queue and visited list
 		queueStart.add(start);
 		visitedStart.add(start);
 
-		//Initialize ending point
+		//Initialize ending point data structures
 		Queue<Reviewer> queueEnd = new LinkedList<Reviewer>();
 		HashSet<Reviewer> visitedEnd = new HashSet<Reviewer>();
 		HashMap<Reviewer, Reviewer> parentEnd = new HashMap<Reviewer, Reviewer>();
-		List<Reviewer> pathFromEnd = new LinkedList<Reviewer>();
+		List<Reviewer> frontierFromEnd = new LinkedList<Reviewer>();
+		//Add end to queue and visited list
 		queueEnd.add(end);
 		visitedEnd.add(end);
 
-		//call bidirectional BFS and if returns a Reviewer that is the collision reviewer where the two BFS encountered
+		//call bidirectional BFS and if returns a Reviewer, that is a collision reviewer where the two BFS encountered
 		Reviewer collisionReviewer = biBfsSearchVisit(queueStart, visitedStart, parentStart, queueEnd, visitedEnd,
-				parentEnd, pathFromStart, pathFromEnd);
+				parentEnd, frontierFromStart, frontierFromEnd);
 		
 		//if exist a collision reviewer build the path between the starting and ending point, if not there is no path
 		if (collisionReviewer != null) {
@@ -459,26 +469,31 @@ public class CapGraph implements Graph {
 	}
 
 	/**
-	 * @param queueStart
-	 * @param visitedStart
-	 * @param parentStart
-	 * @param queueEnd
-	 * @param visitedEnd
-	 * @param parentEnd
-	 * @param pathFromStart
-	 * @param pathFromEnd
-	 * @return
+	 * Helper method that executes bidirectional BFS on the given graph.
+	 * 
+	 * @param queueStart Queue from starting vertex
+	 * @param visitedStart List of visited vertices from start
+	 * @param parentStart Parent map from start where key is next vertex (child) and value is its current vertex (parent)
+	 * @param queueEnd Queue from ending vertex
+	 * @param visitedEnd List of visited vertices from end
+	 * @param parentEnd Parent map from end where key is next vertex (child) and value is its current vertex (parent)
+	 * @param frontierFromStart List of neighbors of current visited node from start used to trace the current BFS frontier
+	 * @param frontierFromEnd List of neighbors of current visited node from end used to trace the current BFS frontier
+	 * @return Returns the collision reviewer, null if there is no collision between the two bfs searches.
 	 */
 	private Reviewer biBfsSearchVisit(Queue<Reviewer> queueStart, HashSet<Reviewer> visitedStart,
 			HashMap<Reviewer, Reviewer> parentStart, Queue<Reviewer> queueEnd, HashSet<Reviewer> visitedEnd,
-			HashMap<Reviewer, Reviewer> parentEnd, List<Reviewer> pathFromStart, List<Reviewer> pathFromEnd) {
+			HashMap<Reviewer, Reviewer> parentEnd, List<Reviewer> frontierFromStart, List<Reviewer> frontierFromEnd) {
 
 		while (!queueStart.isEmpty() && !queueEnd.isEmpty()) {
+			
+			// take the current vertex from queues (start and end)
 			Reviewer currFromStart = queueStart.remove();
 			Reviewer currFromEnd = queueEnd.remove();
 
-			for (Reviewer pfs : pathFromStart) {
-				for (Reviewer pfe : pathFromEnd) {
+			// check for collisions
+			for (Reviewer pfs : frontierFromStart) {
+				for (Reviewer pfe : frontierFromEnd) {
 					// System.out.println("From Start: " + pfs);
 					// System.out.println("From End: " + pfe);
 					if (pfs.equals(pfe)) {
@@ -488,40 +503,51 @@ public class CapGraph implements Graph {
 				}
 			}
 
-			pathFromStart.clear();
-			pathFromEnd.clear();
+			// clear current frontiers
+			frontierFromStart.clear();
+			frontierFromEnd.clear();
 
+			// FROM START BFS
+			// take the neighbors of current starting queue vertex
 			List<Vertex<Reviewer>> neighborsStart = getNeighbors(currFromStart);
 			ListIterator<Vertex<Reviewer>> neighStartIter = neighborsStart.listIterator(neighborsStart.size());
 
 			while (neighStartIter.hasPrevious()) {
 				Reviewer nextStart = neighStartIter.previous().getValue();
 				// System.out.println("CurrFromStart: " + currFromStart);
-				pathFromStart.add(nextStart);
+				
+				// adding neighbor to the frontier list
+				frontierFromStart.add(nextStart);
 				// System.out.println("Next Start:" + nextStart);
+				
+				// if there a neighbor was not already visited add it to visited, add it to parent map and to the bottom of the queue.
 				if (!visitedStart.contains(nextStart)) {
 					visitedStart.add(nextStart);
 					parentStart.put(nextStart, currFromStart);
 					//System.out.println("Next: " + nextStart.getId() + " Curr: " + currFromStart.getId());
 					queueStart.add(nextStart);
-
 				}
 			}
 
+			// FROM END BFS
+			// take the neighbors of current ending queue vertex
 			List<Vertex<Reviewer>> neighborsEnd = getNeighbors(currFromEnd);
 			ListIterator<Vertex<Reviewer>> neighEndIter = neighborsEnd.listIterator(neighborsEnd.size());
 
 			while (neighEndIter.hasPrevious()) {
 				Reviewer nextEnd = neighEndIter.previous().getValue();
 				// System.out.println("CurrFromStart: " + currFromStart);
-				pathFromEnd.add(nextEnd);
+				
+				// adding neighbor to the frontier list
+				frontierFromEnd.add(nextEnd);
 				// System.out.println("Next End:" + nextEnd);
+				
+				// if there a neighbor was not already visited add it to visited, add it to parent map and to the bottom of the queue.
 				if (!visitedEnd.contains(nextEnd)) {
 					visitedEnd.add(nextEnd);
 					parentEnd.put(nextEnd, currFromEnd);
 					//System.out.println("Next End: " + nextEnd.getId() + " Curr: " + currFromEnd.getId());
 					queueEnd.add(nextEnd);
-
 				}
 			}
 
@@ -532,11 +558,14 @@ public class CapGraph implements Graph {
 	
 	
 	/**
-	 * @param start
-	 * @param end
-	 * @param parentStart
-	 * @param parentEnd
-	 * @param collisionReviewer
+	 * Helper method that builds the path between the starting and ending point linking the two paths 
+	 * from start to collision reviewer and from collision reviewer to end
+	 * 
+	 * @param start Starting point
+	 * @param end Ending point
+	 * @param parentStart Parent map from start where key is next vertex (child) and value is its current vertex (parent)
+	 * @param parentEnd Parent map from end where key is next vertex (child) and value is its current vertex (parent)
+	 * @param collisionReviewer The collision reviewer
 	 * @return
 	 */
 	private List<Reviewer> printPath(Reviewer start, Reviewer end, HashMap<Reviewer, Reviewer> parentStart,
@@ -544,11 +573,12 @@ public class CapGraph implements Graph {
 		
 		LinkedList<Reviewer> path = new LinkedList<Reviewer>();
 
+		// starting from the collision reviewer and going down to end
 		Reviewer curr = collisionReviewer;
 		// Reviewer prev = null;
-		// while we have not reached the start add the current node visited as
+		
+		// while we have not reached the end add the current node visited as
 		// first node inside the path
-		// doing so we are creating the path from the start to the end
 		while (!curr.equals(end)) {
 			path.addFirst(curr);
 			// prev = curr;
@@ -556,11 +586,14 @@ public class CapGraph implements Graph {
 			// parentStart.remove(prev);
 		}
 
+		// add end as first vertex
 		path.addFirst(end);
-		// path.addLast(collisionReviewer);
 
+		// reset current node to collision reviewer and now going up to start
 		curr = parentStart.get(collisionReviewer);
 
+		// while we have not reached the start add the current node visited as
+		// last node inside the path
 		while (!curr.equals(start)) {
 			path.addLast(curr);
 			// prev = curr;
@@ -568,7 +601,7 @@ public class CapGraph implements Graph {
 			// parentEnd.remove(prev);
 		}
 
-		// add start to the begin
+		// add start as last vertex
 		path.addLast(start);
 
 		System.out.println("DONE");
@@ -622,135 +655,203 @@ public class CapGraph implements Graph {
 	//TOMITAS'S ALGORITHM MAX CLIQUE
 
 	/**
-	 * @return
+	 * Tomita's algorithm to find cliques. Inside this algorithm it is also used a greedy sequential colouring algorithm (Welsh and Powell) 
+	 * Time complexity is driven by expand method O(n^2) that is the upper bound for Tomita's algorithm.
+	 * 
+	 * To gain the value of time complexity: O(3^n/3) it is needed a mathematical demonstration that in this case is out of scope.
+	 * 
+	 * @return Returns a list of reviewers that forms the maximum clique
 	 */
 	public LinkedList<Reviewer> search() {
 
+		// setting the system for not going over a set time limit 
 		cpuTime = System.currentTimeMillis();
 		timeLimit = 1000*(long) 100000;
+		// set up
 		nodes = 0;
 		colorClass = new ArrayList[numVertices];
 
-		//growing clique
-		ArrayList<Vertex<Reviewer>> C = new ArrayList<Vertex<Reviewer>>();
-		//candidate set
-		ArrayList<Vertex<Reviewer>> P = new ArrayList<Vertex<Reviewer>>();
+		//growing clique of vertices
+		ArrayList<Vertex<Reviewer>> growingClique = new ArrayList<Vertex<Reviewer>>();
+		//candidate set of vertices
+		ArrayList<Vertex<Reviewer>> candidateSet = new ArrayList<Vertex<Reviewer>>();
 		
-		//initialize colorClass array to contain an array list of vertices of that class for each vertex
-		//used to sort vertices by their colour
+		//initialize colorClass array to contain an array list of vertices. 
+		//Each index represent a color so every vertex inside that array list is a vertex of that color
+		//Time complexity: O(numVertices), number of vertices in the graph [O(n)]
 		for (int i = 0; i < numVertices; i++) {
 			colorClass[i] = new ArrayList<Vertex<Reviewer>>();
 		}
 
 		//order the candidate set
-		orderVertices(P);
+		//Time complexity: O(numVerticeslog(numVertices))) [O(nlogn)]
+		orderVertices(candidateSet);
 		
-		expand(C, P);
+		//call helper method to find maximum clique
+		//Time complexity: O(numVerticesInTheCandidateSet^2)
+		expand(growingClique, candidateSet);
 		
 		return solution;
 		
 	}
 
 	/**
-	 * @param ColOrd
+	 * Helper method that sort in a non-increasing order the candidate set using Tomita's Comparator.
+	 * Vertices are ordered by vertex degree number and neighbor vertex degree sum. 
+	 * 
+	 * Time complexity: O(numVertices(log(numVertices))) [O(nlogn)]
+	 * 
+	 * @param colorOrd candidate set to be ordered
 	 */
-	private void orderVertices(ArrayList<Vertex<Reviewer>> ColOrd) {
+	private void orderVertices(ArrayList<Vertex<Reviewer>> colorOrd) {
 
 		ArrayList<Vertex<Reviewer>> v = new ArrayList<Vertex<Reviewer>>();
 
 		// add all the vertices to v
+		// Time complexity: O(numVertices) [O(n)]
 		v.addAll(getVertices());
 
 		//sort v using the comparator defined
+		// Time complexity: O(numVertices(log(numVertices))) [O(n logn)]
 		v.sort(new TomitaComparator<Vertex<Reviewer>>());
 		
-		// add ordered vertices to ColOrd that is P ordered by colors
-		ColOrd.addAll(v);
+		// add ordered vertices to ColOrd that is candidateSet ordered by colors
+		// Time complexity: O(numVertices) [O(n)]
+		colorOrd.addAll(v);
 
 	}
 
 	/**
-	 * @param C
-	 * @param P
+	 * Helper method used to find the maximum clique. It try to expand a clique that is already computed to add one vertex more.
+	 * 
+	 * Time complexity: O(numVerticesInCandidateSet^2) + O(numVerticesInCandidateSet)*(O(i)*O(numEdgesOfVertex)+O(numVerticesInGrowingClique))
+	 * The second term is less than the numVerticesInCandidateSet^2 so asymptotically that means that the time complexity is: O(numVerticesInCandidateSet^2)
+	 * In the first iteration this is O(numVertices^2)
+	 * O(n^2) is the upper bound of Tomita's Algorithm Cliques as stated here: 
+	 * http://ac.els-cdn.com/S0304397506003586/1-s2.0-S0304397506003586-main.pdf?_tid=15477c4c-9c50-11e7-8ad5-00000aab0f02&acdnat=1505725522_4f7eac9abb3e46a792c4055ee12bb612
+	 * 
+	 * To gain the value: O(3^n/3) it is needed a mathematical demonstration that in this case is out of scope.
+	 * 
+	 * @param growingClique Growing clique of vertices
+	 * @param candidateSet Candidate set of vertices
 	 */
-	private void expand(ArrayList<Vertex<Reviewer>> C, ArrayList<Vertex<Reviewer>> P) {
+	private void expand(ArrayList<Vertex<Reviewer>> growingClique, ArrayList<Vertex<Reviewer>> candidateSet) {
 		
+		//if the algorithm is taking too much time stop it
 		if (timeLimit > 0 && (System.currentTimeMillis() - cpuTime) >= timeLimit) {
 			return;
 		}
 
 		nodes++;
 
-		int[] color = new int[P.size()];
+		// array of color. Maximum number of colors is the size of candidateSet, all the vertices fits one color.
+		// holds the color of the ith vertex in candidateSet.
+		int[] color = new int[candidateSet.size()];
 
-		numberSort(P, P, color);
+		// helper method that orders the candidate set by color classes, candidateSet is sorted in non-decreasing color order
+		// Time complexity: O(numVerticesInCandidateSet^2) [O(n^2)] --> worst case first iteration O(numVertices^2)
+		colorSort(candidateSet, candidateSet, color);
 
-		for (int i = P.size() - 1; i >= 0; i--) {
+		// Time complexity external for: O(numVerticesInCandidateSet) [O(n)] --> worst case O(numVertices)
+		// Time complexity: O(numVerticesInCandidateSet)*(O(i)*O(numEdgesOfVertex)+O(numVerticesInGrowingClique))
+		for (int i = candidateSet.size() - 1; i >= 0; i--) {
 			
-			//System.out.println("Expand: " + C + " , " + P);
-			
-			if (C.size() + color[i] <= maxSize) {
-				//System.out.println("FAIL: " + C + " color " + color[i]);
+			//System.out.println("Expand: " + growingClique + " , " + candidateSet);
+			//check if the size of the current max clique + the color of the vertex
+			if (growingClique.size() + color[i] <= maxSize) {
+				//System.out.println("FAIL: " + growingClique + " color " + color[i]);
 				return;
 			}
-			Vertex<Reviewer> v = P.get(i);
-			C.add(v);
-			ArrayList<Vertex<Reviewer>> newP = new ArrayList<Vertex<Reviewer>>(i);
+			
+			Vertex<Reviewer> v = candidateSet.get(i);
+			growingClique.add(v);
+			
+			//create a new candidate set newCandidateSet, set of vertices in candidateSet that are adjacent to v
+			ArrayList<Vertex<Reviewer>> newCandidateSet = new ArrayList<Vertex<Reviewer>>(i);
+			
+			// Time complexity for: O(i), i decreasing from candidate set size to 0
+			// Total time complexity: O(i)*O(numEdgesOfVertex) --> worst case O(i)*O(numVertices) --> O(numVertices^2) in the first run
 			for (int j = 0; j <= i; j++) {
-				Vertex<Reviewer> u = P.get(j);
+				Vertex<Reviewer> u = candidateSet.get(j);
+				
+				//Time complexity: O(numEdgesOfVertex) --> worst case connected with each vertex O(numVertices)
 				if (adjListMap.get(u).contains(new Edge<Reviewer>(u.getValue(),v.getValue()))) {
-					newP.add(u);
+					newCandidateSet.add(u);
 				}
 			}
 			
-			if (newP.isEmpty() && C.size() > maxSize){
-				//System.out.println("Select: " + C + " , " + P);
-				saveSolution(C);
-				//System.out.println("SAVE :" + C);
+			// Time complexity: O(numVerticesInGrowingClique) [O(n)]
+			if (newCandidateSet.isEmpty() && growingClique.size() > maxSize){
+				//System.out.println("Select: " + growingClique + " , " + candidateSet);
+				saveSolution(growingClique);
+				//System.out.println("SAVE :" + growingClique);
 			}
-			if (!newP.isEmpty()){
-				//System.out.println("Select: " + C + " , " + newP);
-				expand(C, newP);
+			if (!newCandidateSet.isEmpty()){
+				//System.out.println("Select: " + growingClique + " , " + newCandidateSet);
+				// Time complexity less than the overall because the newCandidateSet has less vertices at each iteration
+				expand(growingClique, newCandidateSet);
 			}
+			
 			//System.out.println("Reject " + i);
-			C.remove(C.size() - 1);
-			P.remove(i);
+			growingClique.remove(growingClique.size() - 1);
+			candidateSet.remove(i);
 		}
 	}
 
 	/**
-	 * @param ColOrd
-	 * @param P
-	 * @param color
+	 * This helper method help to put vertices into color classes.
+	 * The candidate set candidateSet is sorted in non-decreasing color order.
+	 * Complexity is quadratic in the size of candidateSet.
+	 * Time complexity: O(numVertices^2), in general O(numVerticesInCandidateSet) [O(n^2)]
+	 * 
+	 * @param colorOrd Vertices to be colored 
+	 * @param candidateSet Colored vertices in non-decreasing color order
+	 * @param color Array of colors
 	 */
-	private void numberSort(ArrayList<Vertex<Reviewer>> ColOrd, ArrayList<Vertex<Reviewer>> P, int[] color) {
+	private void colorSort(ArrayList<Vertex<Reviewer>> colorOrd, ArrayList<Vertex<Reviewer>> candidateSet, int[] color) {
 		
+		//variable to record the number of colors used.
 		int colors = 0;
 		
-		//reset the colorClass array of ArrayList
-		for (int i = 0; i < ColOrd.size(); i++){
+		//reset the colorClass array of ArrayList that might be use in a previous step
+		// Time complexity: O(numVerticesinCandidateSet) [O(n)] --> worst case all vertices --> O(numVertices) [O(n)]
+		for (int i = 0; i < colorOrd.size(); i++){
 			colorClass[i].clear();
 		}
-			
-		for(Vertex<Reviewer> v : ColOrd){
+		
+		// Time complexity for: O(numVerticesinCandidateSet) [O(n)] --> worst case all vertices --> O(numVertices) [O(n)]
+		// Total time complexity: O(numVertices^2) [O(n^2)]
+		for(Vertex<Reviewer> v : colorOrd){
 			int k = 0;
+			
+			//place vertex v from ColOrd in the first class of colors where there are no conflicts.
+			//A class in which the vertex is not adjacent to any other vertex in that class
+			// Time complexity conflicts: O(numVerticesinColorClass) [O(n)] --> worst case 1 vertex if all vertices create a color --> O(1)
+			// Time complexity while: O(numConflicts) --> worst case all vertices --> O(numVertices) [O(n)]
+			// Total time complexity: O(numVertices) [O(n)]
 			while (conflicts(v, colorClass[k])){
 				k++;
 			}
 			
-			//add vertex v to that color class
+			//add vertex v to that color class.
 			//System.out.println("Add " + v.getValue().getId() + " to colorClass " + k);
 			colorClass[k].add(v);
 			
+			//take the max between colors and k+1
 			colors = Math.max(colors, k + 1);
 		}
 		
-		
-		P.clear();
+		// clear candidateSet, the candidate set
+		candidateSet.clear();
 		int i = 0;
+		//put vertices in candidateSet ordered by color class
+		// Time complexity internal for: O(numVerticesInColorClass) [O(n)] --> worst case 1 vertex if all vertices create a color --> O(1)
+		// Time complexity external for: O(numColors) [O(n)] --> worst case all vertices O(numVertices) [O(n)]
+		// Total time complexity: O(numVertices) [O(n)]
 		for (int k = 0; k < colors; k++) {
 			for(Vertex<Reviewer> v :  colorClass[k]){
-				P.add(v);
+				//System.out.println("ColorClass: " + k + " Size: " + colorClass[k].size());
+				candidateSet.add(v);
 				color[i++] = k + 1;
 			}
 		}
@@ -759,9 +860,11 @@ public class CapGraph implements Graph {
 	/**
 	 * Check if a given vertex is linked with a vertex of a given color class
 	 * 
-	 * @param v
-	 * @param colorClass
-	 * @return
+	 * Time complexity: O(numVerticesinColorClass) [O(n)]
+	 * 
+	 * @param v Vertex to check against a color class
+	 * @param colorClass Array list of vertices of a given color class
+	 * @return Returns true if there is a conflict
 	 */
 	private boolean conflicts(Vertex<Reviewer> v, ArrayList<Vertex<Reviewer>> colorClass) {
 		
@@ -775,20 +878,26 @@ public class CapGraph implements Graph {
 	}
 
 	/**
-	 * @param C
+	 * Helper method to save the current maximum clique found.
+	 * 
+	 * Time complexity: O(numVerticesInGrowingClique) [O(n)]
+	 * 
+	 * @param maxClique Array list of vertices that compose the current maximum clique
 	 */
-	private void saveSolution(ArrayList<Vertex<Reviewer>> C) {
+	private void saveSolution(ArrayList<Vertex<Reviewer>> maxClique) {
 
-		for(Vertex<Reviewer> v : C){
+		for(Vertex<Reviewer> v : maxClique){
 			solution.add(v.getValue());
 		}
 
-		maxSize = C.size();
+		maxSize = maxClique.size();
 		
 	}
 
 	/**
-	 * @return
+	 * Method that returns the max size of the clique found.
+	 * 
+	 * @return Max size of the clique found
 	 */
 	public int getMaxSize() {
 		return maxSize;
