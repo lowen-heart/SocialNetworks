@@ -9,6 +9,9 @@ import java.util.Comparator;
  */
 public class TomitaComparator<E> implements Comparator<E> {
 
+	/* (non-Javadoc)
+	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 */
 	@Override
 	public int compare(E o1, E o2) {
 		Vertex<?> u = (Vertex<?>) o1;

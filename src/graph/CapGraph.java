@@ -32,11 +32,12 @@ public class CapGraph implements Graph {
 	private int numVertices;
 	private int numEdges;
 	private Map<Vertex<Reviewer>, ArrayList<Edge<Reviewer>>> adjListMap;
-	private List<Graph> sccs;
-	private Vertex<Reviewer> best;
-	private Vertex<Reviewer> worst;
+	private List<Graph> sccs; // variable for SCCs
+	private Vertex<Reviewer> best; // reviewer with best review
+	private Vertex<Reviewer> worst; // reviewer with worst review
 
 	// TOMITA'S ALGORITHM VARIABLES
+	
 	long nodes; // number of decisions
 	long timeLimit; // milliseconds
 	long cpuTime; // milliseconds
@@ -44,10 +45,17 @@ public class CapGraph implements Graph {
 	LinkedList<Reviewer> solution;
 	ArrayList<Vertex<Reviewer>>[] colorClass;
 
+	/**
+	 * Constructor of graph CapGraph
+	 * 
+	 * @throws IllegalAccessException
+	 */
 	public CapGraph() throws IllegalAccessException {
 		super();
 		adjListMap = new HashMap<Vertex<Reviewer>, ArrayList<Edge<Reviewer>>>();
 		sccs = new LinkedList<Graph>();
+		
+		//setup best reviewer to have all 0s as lower limit
 		best = new Vertex<Reviewer>(
 				new Reviewer(Integer.MAX_VALUE, "Best", "Best", "Unknown", new ArrayList<ReviewAirline>(),
 						new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 0.0f, "", 0.0f,
@@ -64,6 +72,8 @@ public class CapGraph implements Graph {
 						new ArrayList<ReviewAirline>(),
 						new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.EMPTY.toString(), 0.0f, "", 0.0f,
 								0.0f, 0.0f, 0.0f, 0.0f, false)));
+		
+		//setup worst reviewer to have all 5s as higher limit
 		worst = new Vertex<Reviewer>(
 				new Reviewer(Integer.MAX_VALUE - 1, "Worst", "Worst", "Unknown", new ArrayList<ReviewAirline>(),
 						new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.ECONOMY.toString(), 10.0f, "",
@@ -81,7 +91,7 @@ public class CapGraph implements Graph {
 						new ReviewAirline(LocalDate.now(), "", ReviewAirline.Classes.EMPTY.toString(), 10.0f, "", 5.0f,
 								5.0f, 5.0f, 5.0f, 5.0f, false)));
 
-		// TOMITA'S VARIABLES
+		// TOMITA'S VARIABLES SETUP
 		this.nodes = maxSize = 0;
 		this.cpuTime = timeLimit = -1;
 		this.solution = new LinkedList<Reviewer>();
@@ -105,8 +115,16 @@ public class CapGraph implements Graph {
 		numVertices++;
 	}
 
+	/**
+	 * Method that helps to get a specific value from the graph
+	 * 
+	 * @param value 
+	 * 				The reviewer to check if it is inside the graph
+	 * @return The reviewer object contained in the vertex. If it does not exist return null
+	 */
 	public Reviewer getVertexValue(Reviewer value) {
 
+		//get all vertices
 		Set<Vertex<Reviewer>> set = adjListMap.keySet();
 		Vertex<Reviewer> v = new Vertex<Reviewer>(value);
 
@@ -119,6 +137,7 @@ public class CapGraph implements Graph {
 			}
 		}
 
+		
 		return null;
 	}
 
@@ -129,10 +148,12 @@ public class CapGraph implements Graph {
 	 */
 	@Override
 	public void addEdge(Reviewer from, Reviewer to) {
+		
 		if (from == null || to == null) {
 			throw new NullPointerException("A reviewer passed is null");
 		}
 
+		//create vertices from and to using arguments passed
 		Vertex<Reviewer> vertexFrom = new Vertex<Reviewer>(from);
 		Vertex<Reviewer> vertexTo = new Vertex<Reviewer>(to);
 
@@ -140,8 +161,10 @@ public class CapGraph implements Graph {
 			throw new NullPointerException("Vertex must be created first");
 		}
 
+		//create edges for of ways
 		Edge<Reviewer> newEdgeFromTo = new Edge<Reviewer>(from, to);
 		Edge<Reviewer> newEdgeToFrom = new Edge<Reviewer>(to, from);
+		//get the current edges for vertices passed as arguments
 		ArrayList<Edge<Reviewer>> edgesFrom = getEdges(from);
 		ArrayList<Edge<Reviewer>> edgesTo = getEdges(to);
 
@@ -149,6 +172,7 @@ public class CapGraph implements Graph {
 			edgesFrom.add(newEdgeFromTo);
 			edgesTo.add(newEdgeToFrom);
 
+			//take the real vertices memorized, not their copies
 			for(Vertex<Reviewer> v : getVertices()){
 				if(v.equals(vertexFrom)){
 					vertexFrom = v;
@@ -158,9 +182,11 @@ public class CapGraph implements Graph {
 				}
 			}
 			
+			//add 1 to the degree of the vertices
 			vertexFrom.setDegree(vertexFrom.getDegree() + 1);
 			vertexTo.setDegree(vertexTo.getDegree() + 1);
 			
+			//calculate sum of neighbor vertices degree
 			vertexFrom.setNebDeg(vertexFrom.getNeighborDeg() + vertexTo.getDegree());
 			vertexTo.setNebDeg(vertexTo.getNeighborDeg() + vertexFrom.getDegree());
 
@@ -174,6 +200,8 @@ public class CapGraph implements Graph {
 
 	/*
 	 * (non-Javadoc)
+	 * 
+	 * Not working in this version of CapGraph
 	 * 
 	 * @see graph.Graph#getEgonet(int)
 	 */
@@ -204,6 +232,8 @@ public class CapGraph implements Graph {
 
 	/*
 	 * (non-Javadoc)
+	 * 
+	 * Not working in this version on CapGraph
 	 * 
 	 * @see graph.Graph#getSCCs()
 	 */
@@ -241,7 +271,7 @@ public class CapGraph implements Graph {
 	}
 
 	/**
-	 * Helps to print the informations about the graph
+	 * Helps to print informations about the graph
 	 */
 	public void printGraph() {
 
@@ -255,10 +285,11 @@ public class CapGraph implements Graph {
 	}
 
 	/**
+	 * Helper method to check if a vertex is part of the graph
 	 * 
 	 * @param vertex
-	 * @return return true if the vertex passed is a vertex of this graph. For
-	 *         tesing purpose.
+	 * @return return true if the vertex passed is a vertex of this graph. Mostly for
+	 *          tesing purpose.
 	 */
 	public boolean isVertex(Reviewer vertex) {
 		Vertex<Reviewer> v = new Vertex<Reviewer>(vertex);
@@ -266,9 +297,10 @@ public class CapGraph implements Graph {
 	}
 
 	/**
+	 * Helper method to get neighbors vertices of a given node.
 	 * 
-	 * @param reviewer
-	 *            vertex from which search for neighbors
+	 * @param reviewer 
+	 * 					Vertex from which search for neighbors
 	 * @return returns the list of neighbors of a vertex
 	 */
 	private List<Vertex<Reviewer>> getNeighbors(Reviewer reviewer) {
@@ -284,6 +316,7 @@ public class CapGraph implements Graph {
 		ArrayList<Vertex<Reviewer>> neighbors = new ArrayList<Vertex<Reviewer>>();
 		Vertex<Reviewer> v = new Vertex<Reviewer>(reviewer);
 
+		//Get edges of the given vertex and build neighbors array list getting "to" vertex from them
 		for (Edge<Reviewer> edge : adjListMap.get(v)) {
 			// System.out.println("Neighbor " + v.getValue().getId() + " : " +
 			// edge.getTo());
@@ -294,10 +327,11 @@ public class CapGraph implements Graph {
 	}
 
 	/**
+	 * Helper method to get edges from a given vertex.
 	 * 
-	 * @param from
-	 *            vertex from which search for edges
-	 * @return returns the list of edges of a vertex
+	 * @param from 
+	 * 				Vertex from which search for edges
+	 * @return Returns the list of edges of a vertex
 	 */
 	private ArrayList<Edge<Reviewer>> getEdges(Reviewer from) {
 		ArrayList<Edge<Reviewer>> edges;
@@ -310,7 +344,7 @@ public class CapGraph implements Graph {
 	/**
 	 * Method to prepare to make a DFS on this graph
 	 * 
-	 * @return returns the vertices of a DFS in a stack structure
+	 * @return Returns the vertices of a DFS in a stack structure
 	 */
 	public Stack<Vertex<Reviewer>> Dfs() {
 		Stack<Vertex<Reviewer>> vertices = new Stack<Vertex<Reviewer>>();
@@ -324,10 +358,10 @@ public class CapGraph implements Graph {
 	 * Helper method used to actually make DFS on a given graph
 	 * 
 	 * @param graph
-	 *            the graph where you need to make a DFS search
+	 *            The graph where you need to make a DFS search
 	 * @param vertices
-	 *            the stack of vertices used for the DFS search
-	 * @return returns a stack of visited vertices during DFS
+	 *            The stack of vertices used for the DFS search
+	 * @return Returns a stack of visited vertices during DFS
 	 */
 	private Stack<Vertex<Reviewer>> Dfs(Graph graph, Stack<Vertex<Reviewer>> vertices) {
 		Set<Vertex<Reviewer>> visited = new HashSet<Vertex<Reviewer>>();
@@ -414,8 +448,10 @@ public class CapGraph implements Graph {
 	 * Entry point for question 1 about degrees of separation. This method checks arguments passed 
 	 * and calls bidirectional BFS helper method.
 	 * 
-	 * @param start Starting point
-	 * @param end Ending point
+	 * @param start 
+	 * 				Starting point
+	 * @param end 
+	 * 				Ending point
 	 * @return Returns a List of Reviewers after running helper method biBfs(). Returns null if there is no path.
 	 */
 	public List<Reviewer> degreesOfSeparation(Reviewer start, Reviewer end) {
@@ -430,8 +466,10 @@ public class CapGraph implements Graph {
 	/**
 	 * Helper method that prepares data structures to execute bidirectional BFS on graph. 
 	 *
-	 * @param start Starting point
-	 * @param end Ending point
+	 * @param start 
+	 * 				Starting point
+	 * @param end 
+	 * 				Ending point
 	 * @return Returns a List of Reviewers after running helper method biBfsSearchVisit(). Returns null if there is no path.
 	 */
 	private List<Reviewer> biBfs(Reviewer start, Reviewer end) {
@@ -471,14 +509,22 @@ public class CapGraph implements Graph {
 	/**
 	 * Helper method that executes bidirectional BFS on the given graph.
 	 * 
-	 * @param queueStart Queue from starting vertex
-	 * @param visitedStart List of visited vertices from start
-	 * @param parentStart Parent map from start where key is next vertex (child) and value is its current vertex (parent)
-	 * @param queueEnd Queue from ending vertex
-	 * @param visitedEnd List of visited vertices from end
-	 * @param parentEnd Parent map from end where key is next vertex (child) and value is its current vertex (parent)
-	 * @param frontierFromStart List of neighbors of current visited node from start used to trace the current BFS frontier
-	 * @param frontierFromEnd List of neighbors of current visited node from end used to trace the current BFS frontier
+	 * @param queueStart 
+	 * 						Queue from starting vertex
+	 * @param visitedStart 
+	 * 						List of visited vertices from start
+	 * @param parentStart 
+	 * 						Parent map from start where key is next vertex (child) and value is its current vertex (parent)
+	 * @param queueEnd 
+	 * 						Queue from ending vertex
+	 * @param visitedEnd 
+	 * 						List of visited vertices from end
+	 * @param parentEnd 
+	 * 						Parent map from end where key is next vertex (child) and value is its current vertex (parent)
+	 * @param frontierFromStart 
+	 * 						List of neighbors of current visited node from start used to trace the current BFS frontier
+	 * @param frontierFromEnd 
+	 * 						List of neighbors of current visited node from end used to trace the current BFS frontier
 	 * @return Returns the collision reviewer, null if there is no collision between the two bfs searches.
 	 */
 	private Reviewer biBfsSearchVisit(Queue<Reviewer> queueStart, HashSet<Reviewer> visitedStart,
@@ -561,12 +607,17 @@ public class CapGraph implements Graph {
 	 * Helper method that builds the path between the starting and ending point linking the two paths 
 	 * from start to collision reviewer and from collision reviewer to end
 	 * 
-	 * @param start Starting point
-	 * @param end Ending point
-	 * @param parentStart Parent map from start where key is next vertex (child) and value is its current vertex (parent)
-	 * @param parentEnd Parent map from end where key is next vertex (child) and value is its current vertex (parent)
-	 * @param collisionReviewer The collision reviewer
-	 * @return
+	 * @param start 
+	 * 				Starting point
+	 * @param end 
+	 * 				Ending point
+	 * @param parentStart 
+	 * 				Parent map from start where key is next vertex (child) and value is its current vertex (parent)
+	 * @param parentEnd 
+	 * 				Parent map from end where key is next vertex (child) and value is its current vertex (parent)
+	 * @param collisionReviewer 
+	 * 				The collision reviewer
+	 * @return List of reviewers in order from end to start
 	 */
 	private List<Reviewer> printPath(Reviewer start, Reviewer end, HashMap<Reviewer, Reviewer> parentStart,
 			HashMap<Reviewer, Reviewer> parentEnd, Reviewer collisionReviewer) {
@@ -701,7 +752,8 @@ public class CapGraph implements Graph {
 	 * 
 	 * Time complexity: O(numVertices(log(numVertices))) [O(nlogn)]
 	 * 
-	 * @param colorOrd candidate set to be ordered
+	 * @param colorOrd 
+	 * 					Candidate set to be ordered
 	 */
 	private void orderVertices(ArrayList<Vertex<Reviewer>> colorOrd) {
 
@@ -732,8 +784,10 @@ public class CapGraph implements Graph {
 	 * 
 	 * To gain the value: O(3^n/3) it is needed a mathematical demonstration that in this case is out of scope.
 	 * 
-	 * @param growingClique Growing clique of vertices
-	 * @param candidateSet Candidate set of vertices
+	 * @param growingClique 
+	 * 						Growing clique of vertices
+	 * @param candidateSet 
+	 * 						Candidate set of vertices
 	 */
 	private void expand(ArrayList<Vertex<Reviewer>> growingClique, ArrayList<Vertex<Reviewer>> candidateSet) {
 		
@@ -804,9 +858,12 @@ public class CapGraph implements Graph {
 	 * Complexity is quadratic in the size of candidateSet.
 	 * Time complexity: O(numVertices^2), in general O(numVerticesInCandidateSet) [O(n^2)]
 	 * 
-	 * @param colorOrd Vertices to be colored 
-	 * @param candidateSet Colored vertices in non-decreasing color order
-	 * @param color Array of colors
+	 * @param colorOrd 
+	 * 					Vertices to be colored 
+	 * @param candidateSet 
+	 * 					Colored vertices in non-decreasing color order
+	 * @param color 
+	 * 					Array of colors
 	 */
 	private void colorSort(ArrayList<Vertex<Reviewer>> colorOrd, ArrayList<Vertex<Reviewer>> candidateSet, int[] color) {
 		
@@ -862,8 +919,10 @@ public class CapGraph implements Graph {
 	 * 
 	 * Time complexity: O(numVerticesinColorClass) [O(n)]
 	 * 
-	 * @param v Vertex to check against a color class
-	 * @param colorClass Array list of vertices of a given color class
+	 * @param v 
+	 * 			Vertex to check against a color class
+	 * @param colorClass 
+	 * 			Array list of vertices of a given color class
 	 * @return Returns true if there is a conflict
 	 */
 	private boolean conflicts(Vertex<Reviewer> v, ArrayList<Vertex<Reviewer>> colorClass) {
@@ -882,7 +941,8 @@ public class CapGraph implements Graph {
 	 * 
 	 * Time complexity: O(numVerticesInGrowingClique) [O(n)]
 	 * 
-	 * @param maxClique Array list of vertices that compose the current maximum clique
+	 * @param maxClique 
+	 * 					Array list of vertices that compose the current maximum clique
 	 */
 	private void saveSolution(ArrayList<Vertex<Reviewer>> maxClique) {
 

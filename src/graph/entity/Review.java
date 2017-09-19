@@ -2,6 +2,10 @@ package graph.entity;
 
 import java.time.LocalDate;
 
+/**
+ * @author LP
+ *
+ */
 public class Review {
 	
 	private LocalDate date;
@@ -10,10 +14,16 @@ public class Review {
 	private boolean recommended;
 	
 	/**
+	 * Constructor of object Review
+	 * 
 	 * @param date
+	 * 				Date of the review
 	 * @param content
+	 * 				Content of the review
 	 * @param overallRating
+	 * 				Overall rating of the review
 	 * @param recommended
+	 * 				1 is recommended, 0 is not recommended
 	 */
 	public Review(LocalDate date, String content, float overallRating, boolean recommended) {
 		super();
@@ -39,34 +49,48 @@ public class Review {
 	}
 
 	/**
+	 * Getter method of date instance variable
+	 * 
 	 * @return
+	 * 			date value
 	 */
 	public LocalDate getDate() {
 		return date;
 	}
 
 	/**
+	 * Getter method of content instance variable
+	 * 
 	 * @return
+	 * 			content value
 	 */
 	public String getContent() {
 		return content;
 	}
 
 	/**
+	 * Getter method of overall rating instance variable
+	 * 
 	 * @return
+	 * 			overall rating value
 	 */
 	public float getOverallRating() {
 		return overallRating;
 	}
 
 	/**
+	 * Setter method of overall rating instance variable
+	 * 
 	 * @param overallRating
+	 * 						new value
 	 */
 	public void setOverallRating(float overallRating) {
 		this.overallRating = overallRating;
 	}
 
 	/**
+	 * Method that checks if the review is recommended or not
+	 * 
 	 * @return
 	 */
 	public boolean isRecommended() {

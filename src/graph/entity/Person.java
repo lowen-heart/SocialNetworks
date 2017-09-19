@@ -1,5 +1,9 @@
 package graph.entity;
 
+/**
+ * @author LP
+ *
+ */
 public class Person{
 	
 	private int id;
@@ -8,10 +12,16 @@ public class Person{
 	private String country;
 	
 	/**
+	 * Constructor of object Person
+	 * 
 	 * @param id
+	 * 				Identifier of the person
 	 * @param name
+	 * 				Name of the person
 	 * @param surname
+	 * 				Surname of the person
 	 * @param country
+	 * 				Country of the person
 	 * @throws IllegalArgumentException 
 	 */
 	public Person(int id, String name, String surname, String country) throws IllegalArgumentException {
@@ -29,33 +39,46 @@ public class Person{
 	}
 
 	/**
-	 * @return
+	 * Getter method of id instance variable
+	 * 
+	 * @return id value
 	 */
 	public int getId() {
 		return id;
 	}
 
 	/**
-	 * @return
+	 * Getter method of name instance variable
+	 * 
+	 * @return name value
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * @return
+	 * Getter method of surname instance variable
+	 * 
+	 * @return surname value
 	 */
 	public String getSurname() {
 		return surname;
 	}
 
 	/**
-	 * @return
+	 * Getter method of country instance variable
+	 * 
+	 * @return country value
 	 */
 	public String getCountry() {
 		return country;
 	}
 	
+	/**
+	 * Method that prints all the instance variables values
+	 * 
+	 * @return String containing all the values of the instance variables in a formatted style
+	 */
 	public String print() {
 		return "Person [id=" + id + ", name=" + name + ", surname=" + surname + ", country=" + country + "]";
 	}
@@ -74,6 +97,7 @@ public class Person{
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
+		
 		if(obj == null || !(obj instanceof Person)){
 			return false;
 		}

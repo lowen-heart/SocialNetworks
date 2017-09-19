@@ -190,8 +190,13 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 	}
 
 	/**
+	 * Core method that checks if this reviewer and another passed through argument are a match or not.
+	 * They are a match if the delta of at least 4 of 5 detailed review are in the range -/+ 1
+	 *  
 	 * @param r
+	 * 			Reviewer to compare
 	 * @return
+	 * 			true they are a match (4+ detailed review -1 < x < +1), false otherwise
 	 */
 	public boolean matches(ReviewAirline r) {
 		

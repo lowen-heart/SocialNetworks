@@ -245,6 +245,9 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see graph.entity.Person#print()
+	 */
 	@Override
 	public String print() {
 		return super.print() + " ; Reviewer [economyReviews=" + economyReviews + ", avgEconomyReview="
