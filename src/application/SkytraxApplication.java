@@ -18,11 +18,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
@@ -36,6 +38,12 @@ import graph.entity.ReviewAirline.Classes;
 import graph.entity.Reviewer;
 import util.GraphLoader;
 
+/**
+ * @author LP
+ *
+ * GUI main application of Skytrax CapStone Project
+ *
+ */
 public class SkytraxApplication extends JFrame implements KeyListener {
 
 	/**
@@ -43,10 +51,11 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 	 */
 	private static final long serialVersionUID = 9080966197484218070L;
 
+	/**
+	 * Hashmap of cabin classes and their string representation
+	 */
 	private static final HashMap<Classes, String> cabinClass = new HashMap<Classes, String>() {
-		/**
-		 * 
-		 */
+		
 		private static final long serialVersionUID = -2156037618641583793L;
 
 		{
@@ -57,7 +66,8 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 			put(ReviewAirline.Classes.EMPTY, "");
 		}
 	};
-
+	
+	//default selected cabin class
 	private static final String SELECTED = cabinClass.get(ReviewAirline.Classes.PREMIUMECONOMY);
 	
 	private Graph guigraph;
@@ -71,17 +81,21 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 	private JLabel numVerticesLabel;
 	private JLabel numEdgesLabel;
 	private JLabel cabinClassesLabel;
-	private JLabel fileLabel;
 	private JLabel result;
 	private JComboBox<String> comboClasses;
 	private JComboBox<String> comboFiles;
 	private JButton easyQuestion;
-	private JButton easyQuestion2;
 	private JButton diffQuestion;
+	private JLabel labelTextArea;
+	private JTextArea textArea;
 
 	private boolean dragged;
 	private boolean keypressed;
 
+	/**
+	 * Constructor
+	 * 
+	 */
 	public SkytraxApplication() {
 
 		dragged = false;
@@ -92,6 +106,14 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 
 	}
 
+	/**
+	 * Method that loads all the data inside the graphs.
+	 * 
+	 * @param cabinClass
+	 * 			Cabin class to use
+	 * @param file
+	 * 			Dataset file path
+	 */
 	private void loadData(String cabinClass, String file) {
 
 		try {
@@ -101,6 +123,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 		}
 		guigraph = new MultiGraph("Skytrax Airline Reviews");
 
+		// load data
 		try {
 			GraphLoader.loadAirportsReviewsFromCSV(graph, guigraph, cabinClass, file);
 		} catch (IOException | IllegalAccessException e) {
@@ -109,11 +132,15 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 
 		//GraphLoader.calculateEdges(graph, guigraph, cabinClass);
 
+		// set best and worst after loading
 		best = ((CapGraph) graph).getBest().getValue();
 		worst = ((CapGraph) graph).getWorst().getValue();
 
 	}
 
+	/**
+	 * Method that initialized user interface
+	 */
 	private void initUI() {
 
 		System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
@@ -133,6 +160,9 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 
 	}
 
+	/**
+	 * Method that initialize the GraphStream panel inside the GUI
+	 */
 	private void initGraphPanel() {
 
 		guigraph.addAttribute("ui.stylesheet",
@@ -157,9 +187,11 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 		((Component) graphView).setMinimumSize(new Dimension(350, 350));
 		((Component) graphView).setBackground(Color.GREEN);
 
+		// create adapter for mouse events
 		MouseAdapter mouseAdapter = new MouseAdapter() {
 			private Point mousePtStart;
 
+			//implement zoom on wheel
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
 				System.out.println("Mouse wheel");
@@ -170,6 +202,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 
 			}
 
+			//implement zoom on selected area
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				System.out.println("Mouse dragged (" + e.getX() + "," + e.getY() + ")");
@@ -183,6 +216,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 				mousePtStart = e.getPoint();
 			}
 
+			//implement and calculate zoom after drag on GUI
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				System.out.println("Mouse released (" + e.getX() + "," + e.getY() + ")");
@@ -226,6 +260,9 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 
 	}
 
+	/**
+	 * Method that initialize user panel
+	 */
 	private void initUserPanel() {
 
 		userPanel = new JPanel();
@@ -237,8 +274,6 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 		numVerticesLabel = new JLabel("#Vertices: " + String.valueOf(((CapGraph) graph).getNumVertices()));
 		numEdgesLabel = new JLabel("#Edges: " + String.valueOf(((CapGraph) graph).getNumEdges()));
 		cabinClassesLabel = new JLabel("Cabin Classes");
-		fileLabel = new JLabel("File");
-		fileLabel.setVisible(false);
 
 		// create an empty combo box with items of type String
 		comboClasses = new JComboBox<String>();
@@ -273,6 +308,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 		comboFiles.addItem("data/skytrax_airline_review.csv");
 		comboFiles.addActionListener(cbActionListener);
 
+		// create button for easy question (degree of separation)
 		easyQuestion = new JButton();
 		easyQuestion.setPreferredSize(new Dimension(150, 70));
 		easyQuestion.setText("<html>Easy 1: Distance between <br />best and worst</html>");
@@ -282,9 +318,14 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				System.out.println("Button Easy 1 Pressed");
+				System.out.println("Button Easy Question Pressed");
+				
+				textArea.setText("");
+				labelTextArea.setVisible(false);
+				textArea.setVisible(false);
+				
 				LinkedList<Reviewer> path = (LinkedList<Reviewer>) ((CapGraph) graph).degreesOfSeparation(worst, best);
-
+				
 				if(path != null){
 					printPath(path);
 				
@@ -301,21 +342,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 
 		easyQuestion.addActionListener(eq1ActionListener);
 
-		easyQuestion2 = new JButton();
-		easyQuestion2.setPreferredSize(new Dimension(150, 70));
-		easyQuestion2.setText("<html>Easy 2: Fundamental Reviewers</html>");
-		easyQuestion2.setVisible(false);
-		// add actionlistner to listen for changes
-		ActionListener eq2ActionListener = new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Button Easy Pressed");
-			}
-		};
-
-		easyQuestion2.addActionListener(eq2ActionListener);
-
+		// create button for difficult question (Max clique)
 		diffQuestion = new JButton();
 		diffQuestion.setPreferredSize(new Dimension(150, 70));
 		diffQuestion.setText("<html>Difficult : Tomita's Algorithm</html>");
@@ -325,7 +352,12 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Button Difficult Pressed");
+				
+				textArea.setText("");
+				labelTextArea.setVisible(false);
+				textArea.setVisible(false);
 
+				// calculate time to perform Tomita's algorithm
 				long cpuTime = System.currentTimeMillis();
 
 				LinkedList<Reviewer> vertices = ((CapGraph) graph).search();
@@ -350,19 +382,29 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 		diffQuestion.addActionListener(dqActionListener);
 
 		result = new JLabel("");
+		labelTextArea = new JLabel("");
+		labelTextArea.setVisible(false);
+		textArea = new JTextArea("");
+		textArea.setVisible(false);
+		textArea.setLineWrap(true);
+		textArea.setWrapStyleWord(true);
+		textArea.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
 		userPanel.add(numVerticesLabel);
 		userPanel.add(numEdgesLabel);
 		userPanel.add(cabinClassesLabel);
 		userPanel.add(comboClasses);
-		userPanel.add(fileLabel);
 		userPanel.add(comboFiles);
 		userPanel.add(easyQuestion);
-		userPanel.add(easyQuestion2);
 		userPanel.add(diffQuestion);
 		userPanel.add(result);
+		userPanel.add(labelTextArea);
+		userPanel.add(textArea);
 	}
 
+	/**
+	 * Method that reloads data after selected changes by user
+	 */
 	private void reloadData() {
 
 		loadData(comboClasses.getSelectedItem().toString(), comboFiles.getSelectedItem().toString());
@@ -372,18 +414,31 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 		numEdgesLabel.setText("#Edges: " + String.valueOf(((CapGraph) graph).getNumEdges()));
 		mainPanel.add((Component) graphView, BorderLayout.LINE_START);
 		result.setText("");
+		labelTextArea.setText("");
+		labelTextArea.setVisible(false);
+		textArea.setText("");
+		textArea.setVisible(false);
 		((Component) graphView).repaint();
 		((Component) graphView).revalidate();
 
 	}
 
+	/**
+	 * Helper method to print path on GraphStream
+	 * 
+	 * @param path
+	 */
 	private void printPath(List<Reviewer> path) {
 
 		System.out.println(path);
+		
 		if (path != null) {
+			labelTextArea.setText("Reviewers:");
+				
 			Reviewer curr = null;
 			Reviewer prev = null;
 			for (Reviewer r : path) {
+				textArea.append(r.getId() + "-" + r.getSurname() + "\n");
 				curr = r;
 				// System.out.println("Current " + curr.toString());
 				if (prev != null) {
@@ -404,19 +459,32 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 				}
 				prev = curr;
 			}
-
+			
+			labelTextArea.setVisible(true);
+			textArea.setVisible(true);
 		}
 	}
 
+	/**
+	 * Helper method to print clique
+	 * 
+	 * @param vertices
+	 */
 	private void printClique(List<Reviewer> vertices) {
 
 		System.out.println(vertices);
-
+		
 		guigraph.addAttribute("ui.stylesheet", "node{ fill-color: lightgrey; size: 10px, 10px;}");
 
 		if (vertices != null) {
+			
+			labelTextArea.setText("Reviewers:");
+			
+			
 			for (Reviewer from : vertices) {
 				guigraph.getNode(String.valueOf(from.getId())).setAttribute("ui.class", "clique");
+				textArea.append(from.getId() + "-" + from.getSurname() + "\n");
+				
 				for (Reviewer to : vertices) {
 					if (!from.equals(to)) {
 						if (guigraph.getEdge(String.valueOf(from.getId()) + "-" + String.valueOf(to.getId())) == null) {
@@ -429,9 +497,17 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 					}
 				}
 			}
+			
+			labelTextArea.setVisible(true);
+			textArea.setVisible(true);
 		}
 	}
 
+	/**
+	 * Main method
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
 		EventQueue.invokeLater(() -> {
@@ -442,11 +518,17 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
+	 */
 	@Override
 	public void keyTyped(KeyEvent e) {
 		System.out.println("Key Typed: " + e.getKeyChar());
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
+	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
 		System.out.println("Key Pressed: " + e.getKeyChar());
@@ -456,6 +538,9 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
+	 */
 	@Override
 	public void keyReleased(KeyEvent e) {
 		System.out.println("Key Released: " + e.getKeyChar());

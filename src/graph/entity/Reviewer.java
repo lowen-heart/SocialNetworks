@@ -21,10 +21,17 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 	private ReviewAirline avgEmptyReview;
 
 	/**
+	 * 
+	 * Constructor method of object Reviewer
+	 * 
 	 * @param id
+	 * 			Identifier
 	 * @param name
+	 * 			Name of reviewer
 	 * @param surname
+	 * 			Surname of reviewer
 	 * @param country
+	 * 			Country of reviewer
 	 * @throws IllegalAccessException
 	 */
 	public Reviewer(int id, String name, String surname, String country) throws IllegalAccessException {
@@ -38,20 +45,31 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 	}
 
 	/**
+	 * Constructor method of object Reviewer
+	 * 
 	 * @param id
+	 * 			Identifier
 	 * @param name
+	 * 			Name of reviewer
 	 * @param surname
+	 * 			Surname of reviewer
 	 * @param country
+	 * 			Country of reviewer
 	 * @param economyReviews
 	 * @param avgEconomyReview
+	 * 			Average economy review
 	 * @param premiumReviews
 	 * @param avgPremiumReview
+	 * 			Average premium review
 	 * @param businessReviews
 	 * @param avgBusinessReview
+	 * 			Average business review
 	 * @param firstReviews
 	 * @param avgFirstReview
+	 * 			Average first review
 	 * @param emptyReviews
 	 * @param avgEmptyReview
+	 * 			Average empty review
 	 * @throws IllegalAccessException
 	 * @throws NullPointerException
 	 */
@@ -81,42 +99,55 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 	}
 
 	/**
-	 * @return
+	 * Getter method of average economy review
+	 * 
+	 * @return Average economy review 
 	 */
 	public ReviewAirline getAvgEconomyReview() {
 		return avgEconomyReview;
 	}
 
 	/**
-	 * @return
+	 * Getter method of average premium review
+	 * 
+	 * @return Average premium review 
 	 */
 	public ReviewAirline getAvgPremiumReview() {
 		return avgPremiumReview;
 	}
 
 	/**
-	 * @return
+	  * Getter method of average business review
+	 * 
+	 * @return Average business review 
 	 */
 	public ReviewAirline getAvgBusinessReview() {
 		return avgBusinessReview;
 	}
 
 	/**
-	 * @return
+	  * Getter method of average first review
+	 * 
+	 * @return Average first review 
 	 */
 	public ReviewAirline getAvgFirstReview() {
 		return avgFirstReview;
 	}
 
 	/**
-	 * @return
+	 * Getter method of average empty review
+	 * 
+	 * @return Average empty review 
 	 */
 	public ReviewAirline getAvgEmptyReview() {
 		return avgEmptyReview;
 	}
 
 	/**
+	 * Method that adds a new review based on its class
+	 * 
 	 * @param ra
+	 * 			New review to add
 	 */
 	public void addReview(ReviewAirline ra) {
 		if (ra == null) {
@@ -149,8 +180,12 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 	}
 
 	/**
+	 * Helper method that calculates average review for all classes
+	 * 
 	 * @param ra
+	 * 			List of reviews
 	 * @param avg
+	 * 			Current average review
 	 */
 	private void calculateAvgReview(List<ReviewAirline> ra, ReviewAirline avg) {
 		if (ra == null || avg == null) {
@@ -163,8 +198,7 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 			temp.setOverallRating(temp.getOverallRating() + r.getOverallRating());
 			temp.setFoodBeverageRating(temp.getFoodBeverageRating() + r.getFoodBeverageRating());
 			temp.setCabinStaffRating(temp.getCabinStaffRating() + r.getCabinStaffRating());
-			temp.setInflightEntertainmentRating(
-					temp.getInflightEntertainmentRating() + r.getInflightEntertainmentRating());
+			temp.setInflightEntertainmentRating(temp.getInflightEntertainmentRating() + r.getInflightEntertainmentRating());
 			temp.setSeatComfortRating(temp.getSeatComfortRating() + r.getSeatComfortRating());
 			temp.setValueMoneyRating(temp.getValueMoneyRating() + r.getValueMoneyRating());
 
@@ -180,44 +214,59 @@ public class Reviewer extends Person implements Comparable<Reviewer> {
 	}
 
 	/**
-	 * @return
+	 * Getter method of economy reviews
+	 * 
+	 * @return List of economy reviews
 	 */
 	public List<ReviewAirline> getEconomyReviews() {
 		return economyReviews;
 	}
 
 	/**
-	 * @return
+	 * Getter method of premium reviews
+	 * 
+	 * @return List of premium reviews
 	 */
 	public List<ReviewAirline> getPremiumReviews() {
 		return premiumReviews;
 	}
 
 	/**
-	 * @return
+	 * Getter method of business reviews
+	 * 
+	 * @return List of business reviews
 	 */
 	public List<ReviewAirline> getBusinessReviews() {
 		return businessReviews;
 	}
 
 	/**
-	 * @return
+	 * Getter method of first reviews
+	 * 
+	 * @return List of first reviews
 	 */
 	public List<ReviewAirline> getFirstReviews() {
 		return firstReviews;
 	}
 
 	/**
-	 * @return
+	 * Getter method of empty reviews
+	 * 
+	 * @return List of empty reviews
 	 */
 	public List<ReviewAirline> getEmptyReviews() {
 		return emptyReviews;
 	}
 
 	/**
+	 * Method that calculates the closeness between this reviewer and another given on a defined cabin class.
+	 * It will use a method matches that actually does all the calculation about closeness.
+	 * 
 	 * @param r
+	 * 			Reviewer to compare
 	 * @param cabinClass
-	 * @return
+	 * 			Cabin class on which compare the two reviewer
+	 * @return True if the reviewers are close, false otherwise.
 	 */
 	public boolean reviewersCloseness(Reviewer r, String cabinClass) {
 

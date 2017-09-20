@@ -8,6 +8,12 @@ import java.time.LocalDate;
  */
 public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 
+	/**
+	 * @author LP
+	 * 
+	 * Enum class that defines cabin classes
+	 *
+	 */
 	public enum Classes {
 		ECONOMY, PREMIUMECONOMY, BUSINESS, FIRSTCLASS, EMPTY
 	};
@@ -21,11 +27,15 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 	private float valueMoneyRating;
 
 	/**
+	 * Constructor method of ReviewAirline object
+	 * 
 	 * @param date
 	 * @param content
 	 * @param cabinClass
+	 * 			Cabin class in one of the pre-defined, see enum Classes
 	 * @param overallRating
 	 * @param name
+	 * 			Name of airline company
 	 * @param seatComfortRating
 	 * @param cabinStaffRating
 	 * @param foodBeverageRating
@@ -99,34 +109,46 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 	}
 
 	/**
+	 * Basic constructor method of object ReviewAirline.
+	 * It will create a review with current date, no content, no name, a defined cabin class and all zeros ratings.
+	 * 
 	 * @param cabinClass
+	 * 			cabin class defined for the review
 	 */
 	public ReviewAirline(String cabinClass) {
 		this(LocalDate.now(), "", cabinClass, 0.0f, "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, false);
 	}
 
 	/**
-	 * @return
+	 * Getter method of name instance variable
+	 * 
+	 * @return Name of airline company
 	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * @return
+	 * Getter method of cabin class instance variable
+	 * 
+	 * @return Cabin class
 	 */
 	public String getCabinClass() {
 		return cabinClass;
 	}
 
 	/**
-	 * @return
+	 * Getter method of seat comfort rating
+	 * 
+	 * @return seat comfort rating
 	 */
 	public float getSeatComfortRating() {
 		return seatComfortRating;
 	}
 
 	/**
+	 * Setter method of seat comfort rating
+	 * 
 	 * @param seatComfortRating
 	 */
 	public void setSeatComfortRating(float seatComfortRating) {
@@ -134,13 +156,17 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 	}
 
 	/**
-	 * @return
+	 * Getter method of cabin staff rating
+	 * 
+	 * @return cabin staff rating
 	 */
 	public float getCabinStaffRating() {
 		return cabinStaffRating;
 	}
 
 	/**
+	 * Setter method of cabin staff rating
+	 * 
 	 * @param cabinStaffRating
 	 */
 	public void setCabinStaffRating(float cabinStaffRating) {
@@ -148,13 +174,17 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 	}
 
 	/**
-	 * @return
+	 * Getter method of food and beverage rating
+	 * 
+	 * @return food and beverage rating
 	 */
 	public float getFoodBeverageRating() {
 		return foodBeverageRating;
 	}
 
 	/**
+	 * Setter method of food and beverage rating
+	 * 
 	 * @param foodBeverageRating
 	 */
 	public void setFoodBeverageRating(float foodBeverageRating) {
@@ -162,13 +192,17 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 	}
 
 	/**
-	 * @return
+	 * Getter method of in flight entertainment rating
+	 * 
+	 * @return in flight entertainment rating
 	 */
 	public float getInflightEntertainmentRating() {
 		return inflightEntertainmentRating;
 	}
 
 	/**
+	 * Setter method of in flight entertainment rating
+	 * 
 	 * @param inflightEntertainmentRating
 	 */
 	public void setInflightEntertainmentRating(float inflightEntertainmentRating) {
@@ -176,13 +210,17 @@ public class ReviewAirline extends Review implements Comparable<ReviewAirline> {
 	}
 
 	/**
-	 * @return
+	 * Getter method of value money rating
+	 * 
+	 * @return value money rating
 	 */
 	public float getValueMoneyRating() {
 		return valueMoneyRating;
 	}
 
 	/**
+	 * Setter method of value money rating
+	 * 
 	 * @param valueMoneyRating
 	 */
 	public void setValueMoneyRating(float valueMoneyRating) {

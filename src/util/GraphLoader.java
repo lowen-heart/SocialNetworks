@@ -66,9 +66,13 @@ public class GraphLoader {
 	 * to represent it later in a GUI
 	 * 
 	 * @param graph
+	 * 			Cap Graph to populate
 	 * @param guigraph
+	 * 			Graphical GraphStream graph to populate
 	 * @param cabinClass
+	 * 			Cabin class to use
 	 * @param fileName
+	 * 			File name path
 	 */
 	public static void loadAirportsReviewsFromCSV(graph.Graph graph, Graph guigraph, String cabinClass, String fileName)
 			throws IOException, IllegalAccessException {
@@ -96,7 +100,7 @@ public class GraphLoader {
 			// System.out.println("Header: " + buffer.readLine());
 			System.out.println("LOADING CABIN CLASS: " + cabinClass);
 			int index = 0;
-			// How to read file in java line by line?
+			// Reading file line by line
 			while ((line = buffer.readLine()) != null) {
 				// System.out.println("Raw CSV data: " + line);
 				//call helper class to load a single line from the CSV file
@@ -130,8 +134,11 @@ public class GraphLoader {
 	 * Helper class that calculate and add edges inside the two graph objects.
 	 * 
 	 * @param graph
+	 * 			Cap Graph to populate
 	 * @param guigraph
+	 * 			Graphical GraphStream graph to populate
 	 * @param cabinClass
+	 * 			Cabin class to use
 	 */
 	private static void calculateEdges(graph.Graph graph, Graph guigraph, String cabinClass) {
 
@@ -311,24 +318,29 @@ public class GraphLoader {
 	 * 
 	 * @param index
 	 * @param line
-	 * @param g
+	 * @param graph
 	 * @param guigraph
 	 * @param cabinClass
 	 * @param seen
 	 * @return
 	 * @throws IllegalAccessException
 	 */
-	private static boolean utilityCSVtoList(int index, String line, graph.Graph g, Graph guigraph, String cabinClass,
+	private static boolean utilityCSVtoList(int index, String line, graph.Graph graph, Graph guigraph, String cabinClass,
 			Set<Reviewer> seen) throws IllegalAccessException {
 		if (line != null) {
+			
+			// split CSV line
 			String[] splitData = line.split(";(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 
+			// take just the lines that are equals to the defined cabin class
 			if (splitData[5].trim().equals(cabinClass)) {
 
+				// Split to take name and surname
 				String[] nameSurname = splitData[1].split(" ");
 
 				Reviewer reviewer;
 
+				// if there are two values inside the array, there is a name and a surname, if not there is just a surname.
 				if (nameSurname.length >= 2) {
 					reviewer = new Reviewer(index, nameSurname[0].trim(), nameSurname[1].trim(), splitData[2].trim());
 				} else {
@@ -352,12 +364,15 @@ public class GraphLoader {
 						Float.parseFloat(splitData[9].trim()), Float.parseFloat(splitData[10].trim()),
 						Float.parseFloat(splitData[11].trim()), Boolean.getBoolean(splitData[12].trim()));
 
+				// if the reviewer is new create the vertex inside the two graphs if not just add the review to the existent.
 				if (!seen.contains(reviewer)) {
 
 					reviewer.addReview(airlineReview);
 
-					g.addVertex(reviewer);
+					graph.addVertex(reviewer);
 					guigraph.addNode(String.valueOf(index));
+					
+					//create label for GUI graph
 					guigraph.getNode(String.valueOf(index)).addAttribute("ui.label",
 							index + " - " + reviewer.getName().toString() + " " + reviewer.getSurname().toString()
 									+ " - " + reviewer.getCountry() + " - " + airlineReview.getOverallRating());
@@ -366,7 +381,7 @@ public class GraphLoader {
 
 				} else {
 					// System.out.println("Already Exists");
-					reviewer = ((CapGraph) g).getVertexValue(reviewer);
+					reviewer = ((CapGraph) graph).getVertexValue(reviewer);
 					// System.out.println(reviewer);
 					reviewer.addReview(airlineReview);
 				}
