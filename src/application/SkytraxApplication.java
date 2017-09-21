@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,11 +20,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.graphstream.graph.Graph;
@@ -88,6 +91,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 	private JButton diffQuestion;
 	private JLabel labelTextArea;
 	private JTextArea textArea;
+	private JScrollPane textAreaScroll;
 
 	private boolean dragged;
 	private boolean keypressed;
@@ -264,7 +268,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 	 * Method that initialize user panel
 	 */
 	private void initUserPanel() {
-
+		
 		userPanel = new JPanel();
 		userPanel.setMaximumSize(new Dimension(400, 800));
 		userPanel.setPreferredSize(new Dimension(200, 600));
@@ -322,7 +326,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 				
 				textArea.setText("");
 				labelTextArea.setVisible(false);
-				textArea.setVisible(false);
+				textAreaScroll.setVisible(false);
 				
 				LinkedList<Reviewer> path = (LinkedList<Reviewer>) ((CapGraph) graph).degreesOfSeparation(worst, best);
 				
@@ -355,7 +359,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 				
 				textArea.setText("");
 				labelTextArea.setVisible(false);
-				textArea.setVisible(false);
+				textAreaScroll.setVisible(false);
 
 				// calculate time to perform Tomita's algorithm
 				long cpuTime = System.currentTimeMillis();
@@ -369,9 +373,9 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 				printClique(vertices);
 
 				if (cpuTime < 1000) {
-					result.setText("CPUTime: " + cpuTime + " ms; Max Clique: " + ((CapGraph) graph).getMaxSize());
+					result.setText("<html> CPUTime: " + cpuTime + " ms <br /> Max Clique: " + ((CapGraph) graph).getMaxSize() +"</html>");
 				} else {
-					result.setText("CPUTime: " + cpuTime / 1000 + " s; Max Clique: " + ((CapGraph) graph).getMaxSize());
+					result.setText("<html> CPUTime: " + cpuTime / 1000 + " s <br /> Max Clique: " + ((CapGraph) graph).getMaxSize() +"</html>");
 				}
 
 				((Component) graphView).repaint();
@@ -382,24 +386,38 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 		diffQuestion.addActionListener(dqActionListener);
 
 		result = new JLabel("");
+		JPanel textAreaPanel = new JPanel();
+		textAreaPanel.setLayout(new BoxLayout(textAreaPanel, BoxLayout.Y_AXIS));
 		labelTextArea = new JLabel("");
 		labelTextArea.setVisible(false);
 		textArea = new JTextArea("");
-		textArea.setVisible(false);
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
 		textArea.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+		textAreaScroll = new JScrollPane (textArea, 
+				   JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		textAreaScroll.setPreferredSize(new Dimension(150,250));
+		textAreaScroll.setVisible(false);
 
 		userPanel.add(numVerticesLabel);
 		userPanel.add(numEdgesLabel);
 		userPanel.add(cabinClassesLabel);
 		userPanel.add(comboClasses);
 		userPanel.add(comboFiles);
-		userPanel.add(easyQuestion);
-		userPanel.add(diffQuestion);
+		
+		JPanel buttonsPanel = new JPanel();
+		buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
+		
+		buttonsPanel.add(easyQuestion);
+		buttonsPanel.add(diffQuestion);
+		buttonsPanel.setBackground(Color.LIGHT_GRAY);
+		buttonsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		userPanel.add(buttonsPanel);
 		userPanel.add(result);
-		userPanel.add(labelTextArea);
-		userPanel.add(textArea);
+		textAreaPanel.add(labelTextArea);
+		textAreaPanel.add(textAreaScroll);
+		userPanel.add(textAreaPanel);
+		
 	}
 
 	/**
@@ -417,7 +435,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 		labelTextArea.setText("");
 		labelTextArea.setVisible(false);
 		textArea.setText("");
-		textArea.setVisible(false);
+		textAreaScroll.setVisible(false);
 		((Component) graphView).repaint();
 		((Component) graphView).revalidate();
 
@@ -461,7 +479,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 			}
 			
 			labelTextArea.setVisible(true);
-			textArea.setVisible(true);
+			textAreaScroll.setVisible(true);
 		}
 	}
 
@@ -499,7 +517,7 @@ public class SkytraxApplication extends JFrame implements KeyListener {
 			}
 			
 			labelTextArea.setVisible(true);
-			textArea.setVisible(true);
+			textAreaScroll.setVisible(true);
 		}
 	}
 
